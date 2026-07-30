@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Attendance Confirmation | Smart Attendance System</title>
+<!-- Material Symbols for Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Roboto Flex -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#dfe0e0",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-primary-fixed": "#001c3a",
+                        "background": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "on-secondary-fixed-variant": "#454747",
+                        "primary": "#005dac",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e4e2e1",
+                        "outline": "#717783",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "on-tertiary-container": "#fbfeff",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "on-primary-fixed-variant": "#004786",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-container": "#767575",
+                        "outline-variant": "#c1c6d4",
+                        "on-surface": "#1a1c1c",
+                        "inverse-primary": "#a5c8ff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "primary-container": "#1976d2",
+                        "primary-fixed": "#d4e3ff",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "tertiary": "#5d5d5c",
+                        "on-surface-variant": "#414752",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#fffdff",
+                        "surface-tint": "#005faf",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "surface": "#f9f9f9",
+                        "secondary": "#5d5f5f",
+                        "on-background": "#1a1c1c",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-container": "#616363"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "margin-tablet": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Roboto Flex"],
+                        "label-lg": ["Roboto Flex"],
+                        "headline-lg-mobile": ["Roboto Flex"],
+                        "body-md": ["Roboto Flex"],
+                        "headline-lg": ["Roboto Flex"],
+                        "label-md": ["Roboto Flex"],
+                        "headline-sm": ["Roboto Flex"],
+                        "headline-md": ["Roboto Flex"],
+                        "body-lg": ["Roboto Flex"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.5px", "fontWeight": "700"}],
+                        "label-md": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Roboto Flex', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .success-bg-gradient {
+            background: radial-gradient(circle at center, rgba(25, 118, 210, 0.05) 0%, rgba(249, 249, 249, 0) 70%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 left-0 w-full z-50 shadow-sm flex items-center justify-between px-md h-14">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg text-primary">Attendance Confirmation</h1>
+</div>
+<button class="active:scale-95 transition-transform p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</header>
+<main class="max-w-3xl mx-auto px-md pt-6">
+<!-- Success Animation Container -->
+<section class="relative w-full aspect-video md:aspect-[21/9] flex flex-col items-center justify-center overflow-hidden rounded-xl mb-lg">
+<!-- STITCH_THREEJS_START:ANIMATION_15 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_15" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_15');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const container = document.querySelector('#animation-container');
+const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Confetti-like particles for success
+const particleCount = 150;
+const geometry = new THREE.PlaneGeometry(0.1, 0.1);
+const materials = [
+    new THREE.MeshBasicMaterial({ color: 0x1976d2, side: THREE.DoubleSide }), // Primary Blue
+    new THREE.MeshBasicMaterial({ color: 0x4caf50, side: THREE.DoubleSide }), // Success Green
+    new THREE.MeshBasicMaterial({ color: 0xffeb3b, side: THREE.DoubleSide }), // Yellow
+    new THREE.MeshBasicMaterial({ color: 0x2196f3, side: THREE.DoubleSide })  // Light Blue
+];
+
+const particles = [];
+for (let i = 0; i < particleCount; i++) {
+    const material = materials[Math.floor(Math.random() * materials.length)];
+    const mesh = new THREE.Mesh(geometry, material);
+    
+    mesh.position.set(
+        (Math.random() - 0.5) * 10,
+        Math.random() * 10 + 5,
+        (Math.random() - 0.5) * 5
+    );
+    
+    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    
+    const velocity = {
+        x: (Math.random() - 0.5) * 0.05,
+        y: -Math.random() * 0.05 - 0.02,
+        z: (Math.random() - 0.5) * 0.05,
+        rotation: {
+            x: Math.random() * 0.1,
+            y: Math.random() * 0.1,
+            z: Math.random() * 0.1
+        }
+    };
+    
+    particles.push({ mesh, velocity });
+    scene.add(mesh);
+}
+
+camera.position.z = 5;
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    particles.forEach(p => {
+        p.mesh.position.x += p.velocity.x;
+        p.mesh.position.y += p.velocity.y;
+        p.mesh.position.z += p.velocity.z;
+        
+        p.mesh.rotation.x += p.velocity.rotation.x;
+        p.mesh.rotation.y += p.velocity.rotation.y;
+        p.mesh.rotation.z += p.velocity.rotation.z;
+        
+        // Reset particles
+        if (p.mesh.position.y < -5) {
+            p.mesh.position.y = 5;
+            p.mesh.position.x = (Math.random() - 0.5) * 10;
+        }
+    });
+    
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+});
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_15 -->
+<div class="relative z-10 flex flex-col items-center animate-in fade-in zoom-in duration-700">
+<div class="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center mb-4 shadow-lg">
+<span class="material-symbols-outlined text-on-primary-container text-5xl" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-center text-primary mb-1">Session Completed Successfully!</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">The final roster has been verified.</p>
+</div>
+</section>
+<!-- Class Information Card -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-sm mb-md border border-outline-variant/20">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider mb-1 block">Course Name</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Advanced AI</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<span class="font-body-md text-body-md">Oct 24, 2023</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="font-body-md text-body-md">10:00 AM - 11:30 AM</span>
+</div>
+</div>
+</div>
+<div class="hidden sm:block">
+<div class="w-32 h-32 rounded-lg bg-cover bg-center shadow-sm" data-alt="A macro photograph of a sleek, modern architectural building with clean glass lines and blue sky reflections, representing an academic environment. The lighting is crisp and midday, creating sharp contrasts and a professional, organized atmosphere. The style is minimalist corporate photography with a focus on depth and clarity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAflW8SBsIqSsvvTbw0R8WSxkT4JBl1fcSSC77G30UfwM1gc0FbPrDmSi-rBDO-8xJgR0a3qAtJIyHewZv_LR2ZW8VIHL4GocgaEGtdFuISY90UaDoPK0Mkr928vfJFUR-8TbiInJiTw4W_7lVYWlgzKz0JgOjsBh_3vmjCHxTi84rBhih73CAl0FqphfI7NF83rVFguv6R08PBZONzSceVI5OVihGsWbbEJ7YS4JlSqRtNPBH4vJ0EYw')"></div>
+</div>
+</div>
+</section>
+<!-- Metrics Grid -->
+<section class="grid grid-cols-2 gap-4 mb-xl">
+<!-- Total -->
+<div class="bg-surface-container-low p-md rounded-xl flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-on-surface-variant mb-2">groups</span>
+<span class="font-headline-md text-headline-md text-on-surface">45</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Students</span>
+</div>
+<!-- Present -->
+<div class="bg-primary-fixed p-md rounded-xl flex flex-col items-center justify-center text-center border-b-2 border-primary">
+<span class="material-symbols-outlined text-primary mb-2">person_check</span>
+<span class="font-headline-md text-headline-md text-primary">43</span>
+<span class="font-label-md text-label-md text-primary">Present</span>
+</div>
+<!-- Absent -->
+<div class="bg-error-container p-md rounded-xl flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-on-error-container mb-2">person_off</span>
+<span class="font-headline-md text-headline-md text-on-error-container">2</span>
+<span class="font-label-md text-label-md text-on-error-container">Absent</span>
+</div>
+<!-- Corrections -->
+<div class="bg-secondary-container p-md rounded-xl flex flex-col items-center justify-center text-center border-l-4 border-primary">
+<span class="material-symbols-outlined text-on-secondary-container mb-2">edit_square</span>
+<span class="font-headline-md text-headline-md text-on-secondary-container">1</span>
+<span class="font-label-md text-label-md text-on-secondary-container">Teacher Correction</span>
+</div>
+</section>
+<!-- Action Buttons -->
+<section class="space-y-4">
+<button class="w-full bg-primary-container text-on-primary-container py-4 px-6 rounded-full font-headline-sm text-headline-sm shadow-md active:scale-[0.98] transition-all hover:brightness-110 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">save</span>
+                Save &amp; Finish Attendance
+            </button>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 border border-outline py-3 px-4 rounded-xl font-title-lg text-title-lg text-on-surface-variant hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                    Export PDF
+                </button>
+<button class="flex items-center justify-center gap-2 border border-outline py-3 px-4 rounded-xl font-title-lg text-title-lg text-on-surface-variant hover:bg-surface-variant active:scale-95 transition-all">
+<span class="material-symbols-outlined">share</span>
+                    Share Report
+                </button>
+</div>
+<div class="text-center pt-4">
+<button class="font-title-lg text-title-lg text-primary hover:underline underline-offset-4 decoration-2 decoration-primary-fixed active:scale-95 transition-all inline-flex items-center gap-2">
+<span class="material-symbols-outlined">dashboard</span>
+                    Return to Dashboard
+                </button>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container flex justify-around items-center h-20 px-base pb-safe shadow-lg">
+<!-- Home -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</button>
+<!-- Classes -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">school</span>
+<span class="font-label-md text-label-md">Classes</span>
+</button>
+<!-- History -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">History</span>
+</button>
+<!-- Settings -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

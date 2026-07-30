@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Attendance Result - Smart Attendance System</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Roboto Flex -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#eeeeee",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#005faf",
+                    "on-primary-fixed-variant": "#004786",
+                    "primary-container": "#1976d2",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#a5c8ff",
+                    "tertiary-fixed": "#e4e2e1",
+                    "secondary": "#5d5f5f",
+                    "primary-fixed-dim": "#a5c8ff",
+                    "primary": "#005dac",
+                    "tertiary-fixed-dim": "#c8c6c6",
+                    "on-tertiary-container": "#fbfeff",
+                    "secondary-fixed": "#e2e2e2",
+                    "tertiary-container": "#767575",
+                    "primary-fixed": "#d4e3ff",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-background": "#1a1c1c",
+                    "on-primary-container": "#fffdff",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f9f9f9",
+                    "secondary-container": "#dfe0e0",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#717783",
+                    "on-primary-fixed": "#001c3a",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-surface-variant": "#414752",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#616363",
+                    "surface": "#f9f9f9",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2f3131",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "surface-variant": "#e2e2e2",
+                    "surface-dim": "#dadada",
+                    "surface-container-low": "#f3f3f3",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "error": "#ba1a1a",
+                    "tertiary": "#5d5d5c",
+                    "outline-variant": "#c1c6d4",
+                    "on-surface": "#1a1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xs": "4px",
+                    "margin-mobile": "16px",
+                    "base": "8px",
+                    "md": "16px",
+                    "margin-tablet": "24px",
+                    "gutter": "16px",
+                    "xl": "32px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "label-md": ["Roboto Flex"],
+                    "headline-lg-mobile": ["Roboto Flex"],
+                    "body-lg": ["Roboto Flex"],
+                    "headline-lg": ["Roboto Flex"],
+                    "headline-md": ["Roboto Flex"],
+                    "body-md": ["Roboto Flex"],
+                    "headline-sm": ["Roboto Flex"],
+                    "title-lg": ["Roboto Flex"],
+                    "label-lg": ["Roboto Flex"]
+            },
+            "fontSize": {
+                    "label-md": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.5px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .bounding-box {
+            border: 2px solid #4ade80;
+            background-color: rgba(74, 222, 128, 0.2);
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden antialiased">
+<!-- TopAppBar Shell Component -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-margin-mobile h-14 bg-surface dark:bg-inverse-surface shadow-sm">
+<div class="flex items-center gap-4">
+<button class="p-2 text-primary dark:text-inverse-primary hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-150 ease-in-out rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary">Smart Attendance System</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant active:scale-95 duration-150 transition-transform">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female university professor with glasses, smiling warmly, captured in a brightly lit academic office setting. The style is clean, modern, and trustworthy, using the blue and white palette of the higher education institution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP6Yk0vZn6fUt3nzjTSIsCgSNR-qQeMimv5hyJS6mAuiJaU8MUtm5Je1vtfn4ONoKrhsA_xGAa3eZiw64HNh7W2XHg0VDaRmJ-Y5MeBP07a7DqP-0nhZlPWOSQ3fT0wOT609mXp1BenaUktkGdNf8wMDWn86FvJpAFS_7ELjebBQmBgx1tSbzEZPkySjhLgSA0UeM2h6t9RtK9crVh3-eC_xcffn6KhaNjsTjJrtFApHypk085vwBycg"/>
+</div>
+</header>
+<main class="pt-14 pb-24">
+<!-- Result Visualization Section -->
+<section class="relative w-full aspect-[4/3] bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[0.2]" data-alt="A wide-angle, high-resolution photograph of a modern university lecture hall filled with diverse students. The lighting is bright and professional. The scene is captured from the professor's perspective, showing several rows of students engaged in a lecture. The overall aesthetic is clean, academic, and technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuV5DtS7VzHhRPRrvEouHyYqGbpHv1t9KLWp4lZ73p-cPCBFdT2agEc_uO0veHveniHJEe2fmzMpZnIenS1947S4SblP5bYhkrkJmAwRQ2-M7Vl6THQd8DVT4z9sJnYpirqhjf759USK96bMfjPqWyerNb6sRbxUXSAiffRlCJPFx0SAlv5pKuhdjgO0SrKPZ9rvP33tmD_09s8JcNNM-9bbJStwsTL-B9JuPgLXjzJ_p6uCLM_peHzQ"/>
+<!-- AI Detection Overlay Emulation -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Bounding Box 1 -->
+<div class="bounding-box w-[12%] h-[15%] left-[20%] top-[30%] rounded-sm shadow-[0_0_8px_rgba(74,222,128,0.5)]">
+<span class="absolute -top-6 left-0 bg-[#4ade80] text-white px-1.5 py-0.5 rounded-sm text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined !text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Detected
+                    </span>
+</div>
+<!-- Bounding Box 2 -->
+<div class="bounding-box w-[10%] h-[13%] left-[45%] top-[25%] rounded-sm shadow-[0_0_8px_rgba(74,222,128,0.5)]">
+<span class="absolute -top-6 left-0 bg-[#4ade80] text-white px-1.5 py-0.5 rounded-sm text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined !text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Detected
+                    </span>
+</div>
+<!-- Bounding Box 3 -->
+<div class="bounding-box w-[11%] h-[14%] left-[68%] top-[35%] rounded-sm shadow-[0_0_8px_rgba(74,222,128,0.5)]"></div>
+<!-- Bounding Box 4 -->
+<div class="bounding-box w-[9%] h-[12%] left-[15%] top-[55%] rounded-sm shadow-[0_0_8px_rgba(74,222,128,0.5)]"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
+<span class="inline-flex items-center gap-2 bg-primary px-3 py-1 rounded-full text-white font-label-lg text-label-lg">
+<span class="material-symbols-outlined !text-[16px]">visibility</span>
+                    Scan Complete
+                </span>
+</div>
+</section>
+<!-- Summary Statistics Card -->
+<div class="px-margin-mobile -mt-6 relative z-10">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.06)] p-4 grid grid-cols-3 divide-x divide-outline-variant/30">
+<div class="flex flex-col items-center">
+<span class="text-on-surface-variant font-label-lg text-label-lg uppercase tracking-wider">Present</span>
+<span class="font-headline-md text-headline-md text-primary mt-1">42</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-on-surface-variant font-label-lg text-label-lg uppercase tracking-wider">Absent</span>
+<span class="font-headline-md text-headline-md text-error mt-1">3</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-on-surface-variant font-label-lg text-label-lg uppercase tracking-wider">Accuracy</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">98%</span>
+</div>
+</div>
+</div>
+<!-- Student List Section -->
+<section class="mt-8 px-margin-mobile">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-title-lg text-title-lg text-on-surface">Verification List</h2>
+<button class="flex items-center gap-1 text-primary font-label-lg text-label-lg hover:underline transition-all">
+<span class="material-symbols-outlined !text-[18px]">sort</span>
+                    Filter
+                </button>
+</div>
+<div class="space-y-3">
+<!-- Alex Rivera -->
+<div class="flex items-center bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98] duration-150">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container mr-4">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist studio portrait of Alex Rivera, a male student with short dark hair, wearing a neutral-colored casual shirt. The background is a soft, out-of-focus academic hall, emphasizing a professional yet approachable student profile aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVofro8gHm7dcpU6xpd4g3GHG0UlO2YA86VSYLby_i8RQpPUpoc85GKqyDYUuNvyHEVxSDd0QJ2xma4rW1SLa-L-x9wHme3PFdhk9Wa0YNolhQ8v5CLXKKZpOE-5dh3FWJx4QZpFPikuU_i2G62af8QwudhOGu4YI4jKDyd5IeBPzDBgACC54Qt1MA2z8Hu9qN6wJIAeKBJc51hfZeyvN9SPB9_iXDRMEcwsgSrBZNqBKY7WJsIOjLEQ"/>
+</div>
+<div class="flex-grow">
+<p class="font-title-lg text-body-lg font-semibold text-on-surface">Alex Rivera</p>
+<p class="font-label-md text-label-md text-on-surface-variant">2023CS01</p>
+</div>
+<div class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-label-lg text-label-lg border border-emerald-200">
+                        Present
+                    </div>
+</div>
+<!-- Priya Sharma -->
+<div class="flex items-center bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98] duration-150">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container mr-4">
+<img class="w-full h-full object-cover" data-alt="A high-quality profile photo of Priya Sharma, a female student of Indian descent with long dark hair, smiling confidently. She is wearing a modern college sweatshirt. The lighting is soft and even, suggesting a bright campus library environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsgImVvQZ5WDolynpEnIT6QvyC688tu4d4EE0W-av_vwl_Dg2tLK06WwIXq8N9ZYBDnCXyfaiLYH7Y-7h0xi0ttY-xozMLExcVxtFdDBheZ7Ikuw0JZfaDrYYHogE0H66OnWuY0j1lCYfxuN2XB7K41_inRIcm2TcwJhLMXXI1BFiZkKSB5TvIwxVTlgLpf8IPhyWXrWoxJQPD4nuvjeUkKG91z3u-vmLjKh_0XbWPZud_Ct-3PunwqQ"/>
+</div>
+<div class="flex-grow">
+<p class="font-title-lg text-body-lg font-semibold text-on-surface">Priya Sharma</p>
+<p class="font-label-md text-label-md text-on-surface-variant">2023CS14</p>
+</div>
+<div class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-label-lg text-label-lg border border-emerald-200">
+                        Present
+                    </div>
+</div>
+<!-- Chen Wei -->
+<div class="flex items-center bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98] duration-150">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container mr-4">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of Chen Wei, an East Asian male student with a calm expression. He is wearing a dark polo shirt. The aesthetic is clean and corporate, consistent with a digital university student directory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnhkS57QG3k2dFySnTmwKg3gUcfY_lo77uEJLD08698e2NB_LF97mT7W1a_vg5qUKG8qW4TJ3-MKhAjdgKKVoOegSDEdQ6KwnhDx9TPekVlp38R6n_Jya59KRrgXSkQ0N6yY3VIRcDG0TP--Z4j9H6RaaSoOQH-baorXiKMdzN0p51tv7jYTDvnrbhQaAgm8O21RL07HyLzNefd2VXWW3JSpTJj_v3B2bj1s8Akzy3_shxaWMGefznLA"/>
+</div>
+<div class="flex-grow">
+<p class="font-title-lg text-body-lg font-semibold text-on-surface">Chen Wei</p>
+<p class="font-label-md text-label-md text-on-surface-variant">2023EE08</p>
+</div>
+<div class="px-3 py-1 rounded-full bg-error-container text-error font-label-lg text-label-lg border border-error/20">
+                        Absent
+                    </div>
+</div>
+<!-- Sarah Johnson -->
+<div class="flex items-center bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98] duration-150">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container mr-4">
+<img class="w-full h-full object-cover" data-alt="A portrait of Sarah Johnson, a Caucasian female student with blonde hair tied back, wearing a light-colored cardigan. She looks attentive and professional. The background is a soft blue-toned academic setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWVruR2d9mFWIL_jLFGSab7b8BraO40gGFT5y1Re__srCV74Tdds2OG91VOYciIk7MBMIdZEbqSfBzpjuyy9zm7m14-d9zTzVSV1bHm9aOgSWTnn-tfs5prynwee8j5QlcYj1SKpoU8WI12K1kFm1aoIcS4Hdme-lrc6sdYxm7J0fboIXQsUD0BR8ISCUCQEmOxByycjWtAX_QXiZrlnYUWuCfdA9jwRsK-Hmx_Ioxslek4AyCJt77RA"/>
+</div>
+<div class="flex-grow">
+<p class="font-title-lg text-body-lg font-semibold text-on-surface">Sarah Johnson</p>
+<p class="font-label-md text-label-md text-on-surface-variant">2023BA22</p>
+</div>
+<div class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-label-lg text-label-lg border border-emerald-200">
+                        Present
+                    </div>
+</div>
+<!-- Extra padding for bottom scroll -->
+<div class="h-2"></div>
+</div>
+</section>
+</main>
+<!-- Finalize Action Shell -->
+<div class="fixed bottom-0 left-0 w-full z-[40] bg-surface/95 backdrop-blur-md px-margin-mobile py-4 pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t border-outline-variant/10">
+<button class="w-full bg-primary-container text-on-primary-container font-headline-sm text-headline-sm py-4 rounded-xl shadow-lg hover:brightness-110 active:scale-[0.97] transition-all duration-200 flex items-center justify-center gap-3">
+            CONTINUE
+            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simple subtle animation for bounding boxes
+            const boxes = document.querySelectorAll('.bounding-box');
+            boxes.forEach((box, index) => {
+                box.style.opacity = '0';
+                box.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    box.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    box.style.opacity = '1';
+                    box.style.transform = 'scale(1)';
+                }, 400 + (index * 150));
+            });
+        });
+    </script>
+</body></html>

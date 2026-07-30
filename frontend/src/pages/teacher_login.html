@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Smart Attendance System - Teacher Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dadada",
+                    "surface-tint": "#005faf",
+                    "surface-container-high": "#e8e8e8",
+                    "on-surface-variant": "#414752",
+                    "primary-container": "#1976d2",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-tertiary-container": "#fbfeff",
+                    "on-primary-container": "#fffdff",
+                    "surface": "#f9f9f9",
+                    "secondary": "#5d5f5f",
+                    "surface-bright": "#f9f9f9",
+                    "surface-container": "#eeeeee",
+                    "primary-fixed-dim": "#a5c8ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-primary-fixed": "#001c3a",
+                    "tertiary-fixed-dim": "#c8c6c6",
+                    "on-surface": "#1a1c1c",
+                    "inverse-primary": "#a5c8ff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#e2e2e2",
+                    "primary-fixed": "#d4e3ff",
+                    "background": "#f9f9f9",
+                    "surface-container-low": "#f3f3f3",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-primary-fixed-variant": "#004786",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#e4e2e1",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#dfe0e0",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-secondary-container": "#616363",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary": "#005dac",
+                    "surface-variant": "#e2e2e2",
+                    "outline": "#717783",
+                    "tertiary-container": "#767575",
+                    "inverse-on-surface": "#f1f1f1",
+                    "outline-variant": "#c1c6d4",
+                    "tertiary": "#5d5d5c",
+                    "inverse-surface": "#2f3131",
+                    "on-background": "#1a1c1c",
+                    "secondary-fixed-dim": "#c6c6c7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "margin-tablet": "24px",
+                    "base": "8px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Roboto Flex"],
+                    "label-md": ["Roboto Flex"],
+                    "body-md": ["Roboto Flex"],
+                    "title-lg": ["Roboto Flex"],
+                    "headline-lg": ["Roboto Flex"],
+                    "body-lg": ["Roboto Flex"],
+                    "headline-lg-mobile": ["Roboto Flex"],
+                    "label-lg": ["Roboto Flex"],
+                    "headline-sm": ["Roboto Flex"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.5px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Roboto Flex', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .input-focus-ring:focus-within {
+            border-color: #005dac;
+            box-shadow: 0 0 0 1px #005dac;
+        }
+        .login-card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-surface">
+<!-- Top Navigation Shell Suppressed (Transactional Page Rule) -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile py-xl">
+<!-- Logo Section -->
+<div class="mb-lg flex flex-col items-center">
+<div class="w-24 h-24 mb-md">
+<img class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9jjdQVFgX3uD4uGMNdLaUuJVr2yjSBV3Ww_mzPrGUjuQNv2uvyuH8upimXdu9rknsUh241g9X7P9gZjqb0KcH18wr7-vmA0qZ2-UsQToRZzIoh4qy_yPbyilhgzP9iTWsK-jYVG-Nog-vo2vwzXCil2ZLjKrxcIl3mlpZz68w8gD1_TWQv5WYgVC3qyrFcPMslaY7vei4LvAlKMSfy9E0XPj40l7egph5jMw23Wxlf_RU3Lex1Lu1ag"/>
+</div>
+<h1 class="font-headline-sm text-headline-sm text-primary text-center tracking-tight">
+                Smart Attendance System
+            </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs opacity-80">
+                Teacher Login
+            </p>
+</div>
+<!-- Login Form Card -->
+<div class="w-full max-w-sm bg-surface-container-lowest p-lg rounded-xl login-card-shadow border border-surface-container">
+<form class="space-y-lg" id="loginForm">
+<!-- Email Field -->
+<div class="relative group">
+<label class="absolute left-3 -top-2 px-1 bg-surface-container-lowest font-label-md text-label-md text-primary transition-all" for="email">
+                        Email Address
+                    </label>
+<div class="flex items-center border border-outline-variant rounded-lg p-md input-focus-ring transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">mail</span>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-body-md text-on-surface" id="email" name="email" placeholder="dr.smith@university.edu" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="relative group">
+<label class="absolute left-3 -top-2 px-1 bg-surface-container-lowest font-label-md text-label-md text-on-surface-variant group-focus-within:text-primary transition-all" for="password">
+                        Password
+                    </label>
+<div class="flex items-center border border-outline-variant rounded-lg p-md input-focus-ring transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">lock</span>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-md text-body-md text-on-surface" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="text-on-surface-variant hover:text-primary transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="passIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Login Action -->
+<div class="pt-base">
+<button class="w-full bg-primary text-on-primary py-md rounded-lg font-title-lg text-title-lg shadow-md active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-sm" type="submit">
+                        Login
+                        <span class="material-symbols-outlined text-[20px]">login</span>
+</button>
+</div>
+<!-- Forgot Password -->
+<div class="text-center">
+<a class="font-label-lg text-label-lg text-primary hover:underline underline-offset-4 decoration-primary-fixed-dim" href="#">
+                        Forgot Password?
+                    </a>
+</div>
+</form>
+</div>
+<!-- Help / Support Hint -->
+<p class="mt-xl font-label-md text-label-md text-on-surface-variant text-center px-lg">
+            Need help accessing your account? <br/>Contact the IT Support Desk.
+        </p>
+</main>
+<!-- Footer -->
+<footer class="py-lg text-center">
+<p class="font-label-md text-label-md text-outline-variant tracking-widest uppercase">
+            Smart Attendance v1.0
+        </p>
+</footer>
+<!-- Interactive Script -->
+<script>
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const passIcon = document.getElementById('passIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                passIcon.innerText = 'visibility_off';
+            } else {
+                passInput.type = 'password';
+                passIcon.innerText = 'visibility';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            // Visual feedback for interaction
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Authenticating...';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Success';
+                btn.classList.replace('bg-primary', 'bg-emerald-600');
+                // Potential redirect logic would go here
+            }, 1200);
+        });
+
+        // Label highlight logic for Material Design aesthetics
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.closest('.relative').querySelector('label').classList.add('text-primary');
+                input.closest('.relative').querySelector('label').classList.remove('text-on-surface-variant');
+            });
+            input.addEventListener('blur', () => {
+                input.closest('.relative').querySelector('label').classList.remove('text-primary');
+                input.closest('.relative').querySelector('label').classList.add('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

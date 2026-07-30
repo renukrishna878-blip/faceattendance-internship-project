@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Student | Smart Attendance System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1c",
+                        "outline-variant": "#c1c6d4",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#dfe0e0",
+                        "error": "#ba1a1a",
+                        "secondary": "#5d5f5f",
+                        "surface-dim": "#dadada",
+                        "surface-container": "#eeeeee",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-surface": "#2f3131",
+                        "tertiary": "#5d5d5c",
+                        "primary-container": "#1976d2",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#a5c8ff",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#004786",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary-fixed": "#001c3a",
+                        "background": "#f9f9f9",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#fffdff",
+                        "secondary-fixed": "#e2e2e2",
+                        "inverse-primary": "#a5c8ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#005faf",
+                        "on-surface-variant": "#414752",
+                        "on-surface": "#1a1c1c",
+                        "primary": "#005dac",
+                        "on-tertiary-container": "#fbfeff",
+                        "outline": "#717783",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "tertiary-fixed": "#e4e2e1",
+                        "on-secondary-container": "#616363",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#767575",
+                        "surface-bright": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "sm": "12px",
+                        "lg": "24px",
+                        "base": "8px",
+                        "margin-tablet": "24px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Roboto Flex"],
+                        "headline-lg-mobile": ["Roboto Flex"],
+                        "headline-md": ["Roboto Flex"],
+                        "body-lg": ["Roboto Flex"],
+                        "body-md": ["Roboto Flex"],
+                        "label-lg": ["Roboto Flex"],
+                        "headline-sm": ["Roboto Flex"],
+                        "headline-lg": ["Roboto Flex"],
+                        "label-md": ["Roboto Flex"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.5px", "fontWeight": "700"}],
+                        "label-md": ["11px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Roboto Flex', sans-serif; background-color: #f9f9f9; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .form-input-focus:focus-within label { transform: translateY(-24px) scale(0.85); color: #005dac; }
+        .custom-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02); }
+        .btn-active:active { transform: scale(0.96); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-margin-mobile h-14 bg-surface shadow-sm">
+<div class="flex items-center gap-md">
+<button class="p-base active:scale-95 duration-150 ease-in-out hover:bg-surface-container-high transition-colors rounded-full">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Add New Student</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a university professor in a bright modern office setting. The lighting is soft and natural, emphasizing a professional and welcoming atmosphere. The overall style is clean and high-definition, consistent with a professional faculty management system dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHYMuhFejRUWOaNYFAnM2DxIrtAcfion1XAnPskaU-s7lSUrvLe39gO1N1orC-XcPOC-LUzBQjJdoMPbfF9Vst58uXwMF0T4ztA25W3CU8cqsSvEcYsJifggwkLVFSnKouJ1v0BxAqDWl-Igk4WlPebBLJtVOaXO8C7_40kqNhF5UkrlGFb2PZ-KbnPIMgfZNTvr8uDUf6BjUY-yqcFxxXMwrsnrO9QqPRNjLqDB2uWARq-M8tKqd6nQ"/>
+</div>
+</header>
+<main class="pt-20 pb-28 px-margin-mobile max-w-4xl mx-auto">
+<!-- Identity Form Section -->
+<section class="mb-lg">
+<div class="flex items-center gap-base mb-md">
+<span class="material-symbols-outlined text-primary">badge</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Student Information</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md bg-surface-container-lowest p-lg rounded-xl custom-shadow">
+<!-- Name -->
+<div class="relative flex flex-col group">
+<label class="font-label-md text-label-md text-outline mb-xs transition-all">Full Name</label>
+<input class="w-full h-12 bg-transparent border border-outline rounded-lg px-md font-body-md text-body-md focus:border-primary focus:ring-0 outline-none" placeholder="e.g. John Doe" type="text"/>
+</div>
+<!-- Register Number -->
+<div class="relative flex flex-col group">
+<label class="font-label-md text-label-md text-outline mb-xs transition-all">Register Number</label>
+<input class="w-full h-12 bg-transparent border border-outline rounded-lg px-md font-body-md text-body-md focus:border-primary focus:ring-0 outline-none" placeholder="e.g. 2024CS101" type="text"/>
+</div>
+<!-- Department -->
+<div class="relative flex flex-col group">
+<label class="font-label-md text-label-md text-outline mb-xs transition-all">Department</label>
+<select class="w-full h-12 bg-transparent border border-outline rounded-lg px-md font-body-md text-body-md focus:border-primary focus:ring-0 outline-none appearance-none">
+<option>Computer Science &amp; Engineering</option>
+<option>Information Technology</option>
+<option>Mechanical Engineering</option>
+<option>Business Administration</option>
+</select>
+<span class="material-symbols-outlined absolute right-md bottom-3 text-outline pointer-events-none">expand_more</span>
+</div>
+<!-- Section & Year -->
+<div class="grid grid-cols-2 gap-md">
+<div class="relative flex flex-col group">
+<label class="font-label-md text-label-md text-outline mb-xs transition-all">Section</label>
+<input class="w-full h-12 bg-transparent border border-outline rounded-lg px-md font-body-md text-body-md focus:border-primary focus:ring-0 outline-none" placeholder="A" type="text"/>
+</div>
+<div class="relative flex flex-col group">
+<label class="font-label-md text-label-md text-outline mb-xs transition-all">Year</label>
+<select class="w-full h-12 bg-transparent border border-outline rounded-lg px-md font-body-md text-body-md focus:border-primary focus:ring-0 outline-none appearance-none">
+<option>1st Year</option>
+<option>2nd Year</option>
+<option>3rd Year</option>
+<option>4th Year</option>
+</select>
+<span class="material-symbols-outlined absolute right-md bottom-3 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Biometric Enrollment Section -->
+<section class="mb-lg">
+<div class="flex items-center gap-base mb-md">
+<span class="material-symbols-outlined text-primary">drafts</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Biometric Enrollment</h2>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl custom-shadow">
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Capture or upload four specific facial angles to ensure high accuracy for the facial recognition system.</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<!-- Front Face -->
+<div class="flex flex-col items-center gap-sm">
+<div class="relative w-full aspect-square bg-surface-container rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-4xl">add_a_photo</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant font-bold">Front Face</span>
+</div>
+<!-- Left Side -->
+<div class="flex flex-col items-center gap-sm">
+<div class="relative w-full aspect-square bg-surface-container rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-4xl">add_a_photo</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant font-bold">Left Side</span>
+</div>
+<!-- Right Side -->
+<div class="flex flex-col items-center gap-sm">
+<div class="relative w-full aspect-square bg-surface-container rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-4xl">add_a_photo</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant font-bold">Right Side</span>
+</div>
+<!-- Smiling Face -->
+<div class="flex flex-col items-center gap-sm">
+<div class="relative w-full aspect-square bg-surface-container rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden hover:border-primary transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-4xl">add_a_photo</span>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant font-bold">Smiling Face</span>
+</div>
+</div>
+<!-- Gallery Preview Area -->
+<div class="mt-xl pt-lg border-t border-outline-variant">
+<h3 class="font-label-lg text-label-lg text-outline uppercase tracking-widest mb-md">Enrollment Queue</h3>
+<div class="flex flex-wrap gap-md">
+<!-- Example Thumbnails (Empty State) -->
+<div class="w-16 h-16 rounded-lg bg-surface-variant flex items-center justify-center relative overflow-hidden group">
+<img class="w-full h-full object-cover opacity-40" data-alt="A small, sharp thumbnail of a young student's front face profile shot for biometric enrollment. The background is neutral grey, and the lighting is even and flat to capture features clearly. The image is framed as a tight headshot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF4tzACnJG6q2cl6RGb0-EZE70gInen2q1j8vKHoDfz7kqDYkzSM-NyAdkwfTBvRwAaRbrl1iH3SVT2gJjYpcdig031R2KnL9LEXHiI5Q5OXHDlDfhpBHeDY8v6TVRp0YyQWWUtriCH6qCkAIEk7haA0wsDbiA59DBy69RiUdTrIY8PnCeeT14qzvKi-BsHl_qOVM9LvSdfgkk5F5uwZBoq3C6O9oi1JQIeUmeJ9D2B6fdQFfGF5wcFQ"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/20">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Placeholder for pending uploads -->
+<div class="w-16 h-16 rounded-lg border border-outline-variant border-dotted flex items-center justify-center text-outline-variant">
+<span class="material-symbols-outlined text-xs">hourglass_empty</span>
+</div>
+<div class="w-16 h-16 rounded-lg border border-outline-variant border-dotted flex items-center justify-center text-outline-variant">
+<span class="material-symbols-outlined text-xs">hourglass_empty</span>
+</div>
+<div class="w-16 h-16 rounded-lg border border-outline-variant border-dotted flex items-center justify-center text-outline-variant">
+<span class="material-symbols-outlined text-xs">hourglass_empty</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Terms / Notice -->
+<div class="px-md mb-xl flex gap-sm items-start">
+<span class="material-symbols-outlined text-outline text-body-lg">info</span>
+<p class="font-body-md text-body-md text-on-surface-variant">By saving, you confirm that this biometric data is being processed in compliance with the institution's privacy policy for attendance tracking purposes only.</p>
+</div>
+</main>
+<!-- Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest p-md pb-safe border-t border-outline-variant md:flex md:justify-center">
+<div class="max-w-4xl w-full flex flex-col md:flex-row gap-md">
+<button class="flex-1 h-12 bg-primary text-white font-title-lg text-title-lg rounded-full flex items-center justify-center gap-sm active:scale-95 transition-all shadow-lg hover:bg-surface-tint">
+<span class="material-symbols-outlined">save</span>
+                Save Student
+            </button>
+<button class="flex-none h-12 px-xl border border-outline text-primary font-title-lg text-title-lg rounded-full flex items-center justify-center active:scale-95 transition-all md:order-first">
+                Cancel
+            </button>
+</div>
+</div>
+<!-- Success Modal (Hidden by default) -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-md" id="successModal">
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+<div class="relative bg-surface-container-lowest p-xl rounded-2xl max-w-sm w-full text-center shadow-2xl scale-95 transition-transform duration-300">
+<div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-lg">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Student Enrolled</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl">Student profile and biometric data have been successfully added to the system.</p>
+<button class="w-full h-12 bg-primary text-white rounded-full font-title-lg transition-all active:scale-95" onclick="toggleModal()">Done</button>
+</div>
+</div>
+<script>
+        function toggleModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.toggle('hidden');
+            if(!modal.classList.contains('hidden')) {
+                setTimeout(() => {
+                    modal.querySelector('.relative').classList.remove('scale-95');
+                    modal.querySelector('.relative').classList.add('scale-100');
+                }, 10);
+            }
+        }
+
+        // Simulating the interaction for demonstration
+        document.querySelector('button.bg-primary').addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleModal();
+        });
+
+        // Simple touch feedback for mobile
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('touchend', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>

@@ -1,11 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+
 const TakeAttendance = () => {
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
-  const store = useStore();
+  const setSelectedClass = useStore((state) => state.setSelectedClass);
+  const setAttendanceSession = useStore((state) => state.setAttendanceSession);
+  const [selectedClassForm, setSelectedClassForm] = useState({
+    department: '',
+    year: '',
+    section: '',
+    subject: '',
+  });
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleClassChange = (event) => {
+    const { name, value } = event.target;
+    setSelectedClassForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setSelectedPhoto(null);
+      setErrorMessage('Please upload a PNG, JPG, or WEBP image.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setSelectedPhoto(null);
+      setErrorMessage('Photo size must be 10MB or less.');
+      event.target.value = '';
+      return;
+    }
+
+    setSelectedPhoto(file);
+    setErrorMessage('');
+  };
+
+  const handleProceedToScan = () => {
+    const isClassFormComplete = Object.values(selectedClassForm).every(Boolean);
+    if (!isClassFormComplete) {
+      setErrorMessage('Please select department, year, section, and subject.');
+      return;
+    }
+
+    if (!selectedPhoto) {
+      setErrorMessage('Please upload a classroom photo before scanning.');
+      return;
+    }
+
+    setSelectedClass(selectedClassForm);
+    setAttendanceSession({
+      uploadedImage: selectedPhoto,
+      date: new Date().toISOString(),
+    });
+    navigate('/attendance/upload');
+  };
 
   return (
     <>
@@ -45,8 +105,8 @@ const TakeAttendance = () => {
 <div className="space-y-base">
 <label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Department</label>
 <div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
-<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer">
-<option disabled="" selected="" value="">Select Department</option>
+<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="department" value={selectedClassForm.department} onChange={handleClassChange}>
+<option disabled value="">Select Department</option>
 <option value="cs">Comp. Science</option>
 <option value="ee">Electrical Eng.</option>
 <option value="me">Mechanical Eng.</option>
@@ -59,8 +119,8 @@ const TakeAttendance = () => {
 <div className="space-y-base">
 <label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Year</label>
 <div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
-<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer">
-<option disabled="" selected="" value="">Select Academic Year</option>
+<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="year" value={selectedClassForm.year} onChange={handleClassChange}>
+<option disabled value="">Select Academic Year</option>
 <option value="1">1st Year</option>
 <option value="2">2nd Year</option>
 <option value="3">3rd Year</option>
@@ -73,8 +133,8 @@ const TakeAttendance = () => {
 <div className="space-y-base">
 <label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Section</label>
 <div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
-<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer">
-<option disabled="" selected="" value="">Select Section</option>
+<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="section" value={selectedClassForm.section} onChange={handleClassChange}>
+<option disabled value="">Select Section</option>
 <option value="A">Section A</option>
 <option value="B">Section B</option>
 <option value="C">Section C</option>
@@ -86,8 +146,8 @@ const TakeAttendance = () => {
 <div className="space-y-base">
 <label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Subject</label>
 <div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
-<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer">
-<option disabled="" selected="" value="">Select Subject</option>
+<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="subject" value={selectedClassForm.subject} onChange={handleClassChange}>
+<option disabled value="">Select Subject</option>
 <option value="ai">Advanced AI</option>
 <option value="dm">Discrete Math</option>
 <option value="os">Operating Systems</option>
@@ -101,7 +161,7 @@ const TakeAttendance = () => {
 {/*  Upload Action Section  */}
 <div className="md:col-span-12">
 <div className="relative group">
-<input accept="image/*" className="hidden" id="photo-upload" type="file"/>
+<input accept="image/png,image/jpeg,image/webp" className="hidden" id="photo-upload" type="file" onChange={handlePhotoUpload}/>
 <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-primary/30 rounded-xl bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer group-hover:border-primary" htmlFor="photo-upload">
 <div className="flex flex-col items-center justify-center pt-5 pb-6">
 <div className="w-16 h-16 bg-primary-container rounded-full flex items-center justify-center mb-md shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -112,6 +172,8 @@ const TakeAttendance = () => {
 </div>
 </label>
 </div>
+{selectedPhoto ? <p className="mt-sm font-body-md text-body-md text-primary">Selected: {selectedPhoto.name}</p> : null}
+{errorMessage ? <p className="mt-sm font-body-md text-body-md text-error">{errorMessage}</p> : null}
 {/*  Secondary Info  */}
 <div className="mt-lg p-md bg-surface-container-high rounded-lg flex items-start gap-md border border-outline-variant/20">
 <span className="material-symbols-outlined text-primary-container">info</span>
@@ -125,7 +187,7 @@ const TakeAttendance = () => {
 <button className="w-full md:w-auto px-xl py-3 rounded-lg font-label-lg text-label-lg text-primary border border-primary hover:bg-primary/5 transition-colors active:scale-95">
                     VIEW STUDENT ROSTER
                 </button>
-<button className="w-full md:w-auto px-xl py-3 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary shadow-md hover:shadow-lg transition-all active:scale-95 uppercase font-bold tracking-widest">
+<button className="w-full md:w-auto px-xl py-3 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary shadow-md hover:shadow-lg transition-all active:scale-95 uppercase font-bold tracking-widest disabled:opacity-60 disabled:cursor-not-allowed" onClick={handleProceedToScan} disabled={!selectedPhoto}>
                     PROCEED TO SCAN
                 </button>
 </div>

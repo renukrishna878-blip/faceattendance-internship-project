@@ -1,11 +1,70 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 
 const UploadClassroomPhoto = () => {
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
-  const store = useStore();
+  const setAttendanceSession = useStore((state) => state.setAttendanceSession);
+
+  useEffect(() => {
+    let progressValue = 0;
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    const steps = [
+      { duration: 800, icon: 'icon-1', label: 'step-1' },
+      { duration: 600, icon: 'icon-2', label: 'step-2' },
+      { duration: 600, icon: 'icon-3', label: 'step-3' },
+    ];
+
+    let currentStep = 0;
+    let elapsed = 0;
+
+    const processStep = () => {
+      if (currentStep >= steps.length) {
+        if (progressValue < 100) {
+          progressValue += 10;
+          if (progressValue > 100) progressValue = 100;
+          if (progressBar) progressBar.style.width = `${progressValue}%`;
+          if (progressText) progressText.textContent = `${Math.floor(progressValue)}% Completed`;
+          setTimeout(processStep, 100);
+        } else {
+          setAttendanceSession({
+            detectedFaces: 45,
+            recognizedStudents: 42,
+            absentStudents: 3,
+          });
+          navigate('/attendance/result');
+        }
+        return;
+      }
+
+      const step = steps[currentStep];
+      elapsed += step.duration;
+      progressValue = Math.min(95, (elapsed / 2000) * 95);
+
+      if (progressBar) progressBar.style.width = `${progressValue}%`;
+      if (progressText) progressText.textContent = `${Math.floor(progressValue)}% Completed`;
+
+      const iconEl = document.getElementById(step.icon);
+      const stepEl = document.getElementById(step.label);
+      if (iconEl) {
+        iconEl.textContent = 'check_circle';
+        iconEl.classList.remove('animate-spin');
+        iconEl.classList.add('text-success');
+      }
+      if (stepEl) {
+        stepEl.classList.remove('bg-surface-container-low');
+        stepEl.classList.add('bg-success-container');
+      }
+
+      currentStep++;
+      setTimeout(processStep, step.duration);
+    };
+
+    const timer = setTimeout(processStep, 500);
+    return () => clearTimeout(timer);
+  }, [navigate, setAttendanceSession]);
 
   return (
     <>

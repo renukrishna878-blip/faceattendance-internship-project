@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
+import { DEPARTMENTS } from '../utils/timetableData';
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
@@ -14,13 +15,21 @@ const TakeAttendance = () => {
     year: '',
     section: '',
     subject: '',
+    date: new Date().toISOString().split('T')[0], // defaults to today
+    timing: '09:00 AM - 10:30 AM',
   });
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleClassChange = (event) => {
     const { name, value } = event.target;
-    setSelectedClassForm((prev) => ({ ...prev, [name]: value }));
+    setSelectedClassForm((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === 'department') {
+        updated.subject = ''; // reset subject on department change
+      }
+      return updated;
+    });
   };
 
   const handlePhotoUpload = (event) => {
@@ -50,7 +59,7 @@ const TakeAttendance = () => {
   const handleProceedToScan = () => {
     const isClassFormComplete = Object.values(selectedClassForm).every(Boolean);
     if (!isClassFormComplete) {
-      setErrorMessage('Please select department, year, section, and subject.');
+      setErrorMessage('Please select department, year, section, subject, date, and timing.');
       return;
     }
 
@@ -62,7 +71,8 @@ const TakeAttendance = () => {
     setSelectedClass(selectedClassForm);
     setAttendanceSession({
       uploadedImage: selectedPhoto,
-      date: new Date().toISOString(),
+      date: selectedClassForm.date,
+      timing: selectedClassForm.timing,
     });
     navigate('/attendance/upload');
   };
@@ -146,12 +156,42 @@ const TakeAttendance = () => {
 <div className="space-y-base">
 <label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Subject</label>
 <div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
-<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="subject" value={selectedClassForm.subject} onChange={handleClassChange}>
+<select className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" name="subject" value={selectedClassForm.subject} onChange={handleClassChange} disabled={!selectedClassForm.department}>
 <option disabled value="">Select Subject</option>
-<option value="ai">Advanced AI</option>
-<option value="dm">Discrete Math</option>
-<option value="os">Operating Systems</option>
-<option value="ds">Data Structures</option>
+{selectedClassForm.department && DEPARTMENTS[selectedClassForm.department]?.subjects?.map((sub) => (
+  <option key={sub.id} value={sub.id}>{sub.name}</option>
+))}
+</select>
+<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+{/*  Date  */}
+<div className="space-y-base">
+<label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Date</label>
+<div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
+<input 
+  type="date"
+  className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer outline-none" 
+  name="date" 
+  value={selectedClassForm.date} 
+  onChange={handleClassChange}
+  required
+/>
+</div>
+</div>
+{/*  Timing  */}
+<div className="space-y-base">
+<label className="block font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Class Timing</label>
+<div className="relative focus-ring rounded-lg border border-outline-variant bg-surface transition-all">
+<select 
+  className="w-full bg-transparent border-none py-3 px-4 font-body-lg text-body-lg focus:ring-0 cursor-pointer" 
+  name="timing" 
+  value={selectedClassForm.timing} 
+  onChange={handleClassChange}
+>
+  <option value="09:00 AM - 10:30 AM">09:00 AM - 10:30 AM</option>
+  <option value="11:00 AM - 12:30 PM">11:00 AM - 12:30 PM</option>
+  <option value="02:00 PM - 03:30 PM">02:00 PM - 03:30 PM</option>
 </select>
 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
 </div>
@@ -196,22 +236,18 @@ const TakeAttendance = () => {
 {/*  Navigation Components Logic  */}
 {/*  BottomNavBar (Mobile Only)  */}
 <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface px-base py-sm pb-safe shadow-[0_-1px_3px_rgba(0,0,0,0.04)] h-16">
-<div className="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 transition-all active:scale-90 duration-200">
-<span className="material-symbols-outlined" data-icon="home">home</span>
+<button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200" onClick={() => navigate('/dashboard')}>
+<span className="material-symbols-outlined">home</span>
 <span className="font-label-lg text-label-lg">Home</span>
-</div>
-<div className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200">
-<span className="material-symbols-outlined" data-icon="school">school</span>
-<span className="font-label-lg text-label-lg">Classes</span>
-</div>
-<div className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200">
-<span className="material-symbols-outlined" data-icon="history">history</span>
-<span className="font-label-lg text-label-lg">History</span>
-</div>
-<div className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200">
-<span className="material-symbols-outlined" data-icon="person">person</span>
-<span className="font-label-lg text-label-lg">Profile</span>
-</div>
+</button>
+<button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200" onClick={() => navigate('/students')}>
+<span className="material-symbols-outlined">school</span>
+<span className="font-label-lg text-label-lg">Students</span>
+</button>
+<button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 transition-all hover:bg-surface-container-low active:scale-90 duration-200" onClick={() => navigate('/reports')}>
+<span className="material-symbols-outlined">assessment</span>
+<span className="font-label-lg text-label-lg">Reports</span>
+</button>
 </nav>
 {/*  Side Navigation (Desktop Hint)  */}
 <aside className="hidden md:flex fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-64 bg-surface-container-lowest border-r border-surface-container flex-col py-lg px-md gap-sm">

@@ -217,18 +217,18 @@ const Reports = () => {
 </button>
 {/*  BottomNavBar  */}
 <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center pt-2 pb-safe px-4 bg-surface dark:bg-surface-dim border-t border-outline-variant shadow-lg h-20">
-<a className="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary/20 transition-all rounded-full px-4 group active:scale-90 duration-200" href="#">
-<span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform" data-icon="dashboard">dashboard</span>
+<button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary/20 transition-all rounded-full px-4 group active:scale-90 duration-200" onClick={() => navigate('/dashboard')}>
+<span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">home</span>
 <span className="font-label-md text-label-md">Home</span>
-</a>
-<a className="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-4 py-1 active:scale-90 duration-200" href="#">
-<span className="material-symbols-outlined mb-1" data-icon="assessment" style={{ fontVariationSettings: "'FILL' 1" }}>assessment</span>
+</button>
+<button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary/20 transition-all rounded-full px-4 group active:scale-90 duration-200" onClick={() => navigate('/students')}>
+<span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">school</span>
+<span className="font-label-md text-label-md">Students</span>
+</button>
+<button className="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-4 py-1 active:scale-90 duration-200" onClick={() => navigate('/reports')}>
+<span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>assessment</span>
 <span className="font-label-md text-label-md">Reports</span>
-</a>
-<a className="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary/20 transition-all rounded-full px-4 group active:scale-90 duration-200" href="#">
-<span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform" data-icon="person">person</span>
-<span className="font-label-md text-label-md">Profile</span>
-</a>
+</button>
 </nav>
 
 

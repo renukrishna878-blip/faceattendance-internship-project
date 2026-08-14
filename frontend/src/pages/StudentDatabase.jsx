@@ -5,6 +5,9 @@ import useStore from '../store/useStore';
 const StudentDatabase = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const teacher = useStore((state) => state.teacher);
+  const teacherName = teacher?.teacherName || localStorage.getItem('teacherName') || 'Dr. Sarah Smith';
+  const teacherPhoto = teacher?.teacherPhoto || localStorage.getItem('teacherPhoto');
   
   // Basic mock data
   const students = [
@@ -33,7 +36,7 @@ const StudentDatabase = () => {
             <img 
               className="w-full h-full object-cover" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz7D3kyO6BiNFqVZHYb-H4bRdHrIm7QCZisbIuFk8rkN000Wr_tBEOrWC8ACJKZxD7gLsudTRaLu1CBKnAXB9a6xkbBXrWcUIoHUOTzAnkVPjr5urbbj4-hDzXVoFuuN9TV-fLCx6Xsu0fdtE4yILlYdW5I7Pq5MDl0N7kV-2FMi6SQBzGPSZnNt4GujRpseGZC_MmVinrcJ3WMY5E3mh-gXLVgIFZSW-TyifSUXpG6MvA2POWFOBT4w" 
-              alt="Dr. Sarah Smith" 
+              alt={teacherName} 
             />
           </div>
         </div>
@@ -42,10 +45,12 @@ const StudentDatabase = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex fixed inset-y-0 left-0 z-40 w-72 flex-col py-6 bg-white shadow-xl rounded-r-xl transition-transform border-r border-gray-100">
         <div className="px-6 pb-8 flex flex-col gap-1 mt-14">
-          <div className="w-16 h-16 rounded-full bg-gray-100 mb-3 overflow-hidden border-2 border-primary">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0H4CaD7-8zexM52khgwhlZYDaKwfJQmi4i6ZZ-I3bSN1iZpJ812jmJfMKUN1zVfC-GvhUrh0uZ8mJhO8g9ebC74a3xmgin75a03m3ltsjSgURFucrTAazYOSoX0RZycj3HNG_Ih2FuYAoTnDViauF2eR9nuJ220eLiho_nF2VmzR3dbcFIaRvmQmPAWC6lXu80xLeBNRcYCHts1sKvkiRC3wgbPD52t6Ge5kUV3QE8rqJTFrqoSca6w" alt="Profile" />
-          </div>
-          <h2 className="text-2xl font-bold text-primary">Dr. Sarah Smith</h2>
+          {teacherPhoto && (
+            <div className="w-16 h-16 rounded-full bg-gray-100 mb-3 overflow-hidden border-2 border-primary">
+              <img className="w-full h-full object-cover" src={teacherPhoto} alt="Profile" />
+            </div>
+          )}
+          <h2 className="text-2xl font-bold text-primary">{teacherName}</h2>
           <p className="text-sm text-gray-600">Computer Science Dept</p>
           <p className="text-xs text-gray-400">Faculty ID: 4829</p>
         </div>
@@ -175,18 +180,18 @@ const StudentDatabase = () => {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white px-2 py-2 shadow-[0_-1px_3px_rgba(0,0,0,0.04)]">
-        <a className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" href="/dashboard">
+        <button className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" onClick={() => navigate('/dashboard')}>
           <span className="material-symbols-outlined">home</span>
           <span className="text-[10px] font-medium mt-1">Home</span>
-        </a>
-        <a className="flex flex-col items-center justify-center bg-blue-100 text-primary rounded-xl px-4 py-1 active:scale-90" href="/students">
+        </button>
+        <button className="flex flex-col items-center justify-center bg-blue-100 text-primary rounded-xl px-4 py-1 active:scale-90" onClick={() => navigate('/students')}>
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
           <span className="text-[10px] font-medium mt-1">Students</span>
-        </a>
-        <a className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" href="/reports">
+        </button>
+        <button className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" onClick={() => navigate('/reports')}>
           <span className="material-symbols-outlined">assessment</span>
           <span className="text-[10px] font-medium mt-1">Reports</span>
-        </a>
+        </button>
       </nav>
     </div>
   );

@@ -127,22 +127,18 @@ const StudentProfile = () => {
 </main>
 {/*  Bottom Navigation  */}
 <nav className="fixed bottom-0 left-0 w-full bg-surface dark:bg-inverse-surface shadow-[0_-1px_4px_0_rgba(0,0,0,0.04)] flex justify-around items-center h-20 px-2 pb-safe z-50">
-<a className="flex flex-col items-center justify-center text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-1 hover:bg-surface-variant/50 transition-colors" href="#">
-<span className="material-symbols-outlined">dashboard</span>
+<button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-1 hover:bg-surface-variant/50 transition-colors" onClick={() => navigate('/dashboard')}>
+<span className="material-symbols-outlined">home</span>
 <span className="font-label-md text-label-md mt-1">Home</span>
-</a>
-<a className="flex flex-col items-center justify-center text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-1 hover:bg-surface-variant/50 transition-colors" href="#">
-<span className="material-symbols-outlined">school</span>
-<span className="font-label-md text-label-md mt-1">Classes</span>
-</a>
-<a className="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-dim text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
-<span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
+</button>
+<button className="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-dim text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-full px-4 py-1 active:scale-95 transition-transform duration-150" onClick={() => navigate('/students')}>
+<span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
 <span className="font-label-md text-label-md mt-1">Students</span>
-</a>
-<a className="flex flex-col items-center justify-center text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-1 hover:bg-surface-variant/50 transition-colors" href="#">
-<span className="material-symbols-outlined">settings</span>
-<span className="font-label-md text-label-md mt-1">Settings</span>
-</a>
+</button>
+<button className="flex flex-col items-center justify-center text-on-surface-variant dark:text-tertiary-fixed-dim px-4 py-1 hover:bg-surface-variant/50 transition-colors" onClick={() => navigate('/reports')}>
+<span className="material-symbols-outlined">assessment</span>
+<span className="font-label-md text-label-md mt-1">Reports</span>
+</button>
 </nav>
 {/*  JavaScript for micro-interactions  */}
 

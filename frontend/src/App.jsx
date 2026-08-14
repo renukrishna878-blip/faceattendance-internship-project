@@ -19,6 +19,7 @@ import TeacherVerification from './pages/TeacherVerification';
 import AttendanceConfirmation from './pages/AttendanceConfirmation';
 import Reports from './pages/Reports';
 import ReportDetails from './pages/ReportDetails';
+import Timetable from './pages/Timetable';
 
 // Route Guard Component
 const RequireClassSelection = ({ children }) => {
@@ -39,6 +40,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="timetable" element={<Timetable />} />
           
           <Route path="students">
             <Route index element={<StudentDatabase />} />

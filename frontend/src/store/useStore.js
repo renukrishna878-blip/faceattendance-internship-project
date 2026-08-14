@@ -4,10 +4,11 @@ const useStore = create((set) => ({
   // --- Teacher Context ---
   teacher: {
     teacherId: null,
-    teacherName: '',
+    teacherName: typeof window !== 'undefined' ? (localStorage.getItem('teacherName') || '') : '',
+    teacherPhoto: typeof window !== 'undefined' ? (localStorage.getItem('teacherPhoto') || '') : '',
     department: '',
   },
-  setTeacher: (teacherData) => set({ teacher: teacherData }),
+  setTeacher: (teacherData) => set((state) => ({ teacher: { ...state.teacher, ...teacherData } })),
 
   // --- Selected Class Context ---
   selectedClass: {

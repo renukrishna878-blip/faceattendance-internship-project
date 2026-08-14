@@ -30,9 +30,16 @@ const UploadClassroomPhoto = () => {
           setTimeout(processStep, 100);
         } else {
           setAttendanceSession({
-            detectedFaces: 45,
-            recognizedStudents: 42,
-            absentStudents: 3,
+            detectedFaces: 4,
+            recognizedStudents: 3,
+            absentStudents: 1,
+            attendanceStatus: {
+              '2023CS01': 'Present',
+              '2023CS14': 'Present',
+              '2023EE08': 'Absent',
+              '2023BA22': 'Present',
+            },
+            editedStudents: [],
           });
           navigate('/attendance/result');
         }

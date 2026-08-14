@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useStore from '../store/useStore';
 
 const TeacherLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [teacherName, setTeacherName] = useState('');
+  const [teacherPhoto, setTeacherPhoto] = useState('');
   const navigate = useNavigate();
+  const setTeacher = useStore((state) => state.setTeacher);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setIsAuthenticating(true);
-    
-    // Simulate login
-    setTimeout(() => {
-      setIsAuthenticating(false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 800);
-    }, 1200);
+    const normalizedName = teacherName.trim() || 'Dr. Smith';
+    setTeacher({
+      teacherId: 1,
+      teacherName: normalizedName,
+      teacherPhoto: teacherPhoto || '',
+      department: 'Computer Science',
+    });
+    try {
+      localStorage.setItem('teacherName', normalizedName);
+      if (teacherPhoto) {
+        localStorage.setItem('teacherPhoto', teacherPhoto);
+      } else {
+        localStorage.removeItem('teacherPhoto');
+      }
+    } catch (storageError) {
+      console.warn('Could not save teacher credentials to localStorage:', storageError);
+    }
+    navigate('/dashboard');
   };
 
   return (
@@ -46,10 +58,71 @@ const TeacherLogin = () => {
         <div className="w-full max-w-sm bg-white p-6 rounded-xl shadow border border-gray-200">
           <form className="space-y-6" onSubmit={handleLogin}>
             
-            {/* Email Field */}
+            {/* Teacher's Name Field */}
             <div className="relative group">
               <label 
                 className="absolute left-3 -top-2 px-1 bg-white text-xs font-medium text-primary transition-all" 
+                htmlFor="teacherName"
+              >
+                Teacher's Name
+              </label>
+              <div className="flex items-center border border-gray-300 rounded-lg p-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-colors">
+                <span className="material-symbols-outlined text-gray-500 mr-2 text-sm">person</span>
+                <input 
+                  className="w-full bg-transparent border-none p-0 focus:ring-0 text-sm text-gray-900 outline-none" 
+                  id="teacherName" 
+                  name="teacherName" 
+                  placeholder="e.g. Dr. Sarah Smith" 
+                  required 
+                  type="text"
+                  value={teacherName}
+                  onChange={(e) => setTeacherName(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Profile Photo Upload Field (Optional) */}
+            <div className="relative group">
+              <label 
+                className="absolute left-3 -top-2 px-1 bg-white text-xs font-medium text-gray-500 group-focus-within:text-primary transition-all" 
+                htmlFor="teacherPhoto"
+              >
+                Profile Photo (Optional)
+              </label>
+              <div className="flex items-center border border-gray-300 rounded-lg p-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-colors bg-white">
+                <span className="material-symbols-outlined text-gray-500 mr-2 text-sm">photo_camera</span>
+                <input 
+                  className="w-full text-xs text-gray-900 outline-none file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
+                  id="teacherPhoto" 
+                  name="teacherPhoto" 
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setTeacherPhoto(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    } else {
+                      setTeacherPhoto('');
+                    }
+                  }}
+                />
+              </div>
+              {teacherPhoto && (
+                <div className="mt-2 flex items-center gap-2">
+                  <img src={teacherPhoto} className="w-10 h-10 rounded-full object-cover border border-gray-300" alt="Preview" />
+                  <button type="button" onClick={() => setTeacherPhoto('')} className="text-xs text-error font-medium hover:underline">Remove photo</button>
+                </div>
+              )}
+            </div>
+
+            {/* Email Field */}
+            <div className="relative group">
+              <label 
+                className="absolute left-3 -top-2 px-1 bg-white text-xs font-medium text-gray-500 group-focus-within:text-primary transition-all" 
                 htmlFor="email"
               >
                 Email Address

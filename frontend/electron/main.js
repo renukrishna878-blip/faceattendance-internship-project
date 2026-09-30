@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { fork } from 'child_process';
 import log from 'electron-log';
+import fs from 'fs';
 import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 
@@ -29,7 +30,12 @@ function createWindow() {
   });
 
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173');
+    const loadDevURL = () => {
+      mainWindow.loadURL('http://localhost:5173').catch(() => {
+        setTimeout(loadDevURL, 1000);
+      });
+    };
+    loadDevURL();
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
@@ -92,5 +98,44 @@ app.on('before-quit', () => {
   if (backendProcess) {
     log.info('Terminating backend process...');
     backendProcess.kill();
+  }
+});
+
+// Native Print PDF handler
+ipcMain.on('print-pdf', (event) => {
+  if (mainWindow) {
+    mainWindow.webContents.print({ silent: false, printBackground: true }, (success, failureReason) => {
+      if (!success) log.error(`Failed to print PDF: ${failureReason}`);
+    });
+  }
+});
+
+// Native Save File Dialog handler
+ipcMain.on('save-report', async (event, content, defaultFilename) => {
+  if (!mainWindow) return;
+  
+  try {
+    const { filePath } = await dialog.showSaveDialog(mainWindow, {
+      title: 'Save Attendance Report',
+      defaultPath: path.join(app.getPath('downloads'), defaultFilename),
+      filters: [
+        { name: 'Text Files', extensions: ['txt'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    
+    if (filePath) {
+      fs.writeFile(filePath, content, 'utf8', (err) => {
+        if (err) {
+          log.error('Failed to write report file:', err);
+          mainWindow.webContents.send('save-report-reply', false);
+        } else {
+          mainWindow.webContents.send('save-report-reply', true, path.basename(filePath));
+        }
+      });
+    }
+  } catch (err) {
+    log.error('Error showing save dialog:', err);
+    mainWindow.webContents.send('save-report-reply', false);
   }
 });

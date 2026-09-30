@@ -48,7 +48,7 @@ const Timetable = () => {
               >
                 <option value="">-- Select Department --</option>
                 {Object.entries(DEPARTMENTS).map(([key, dept]) => (
-                  <option key={key} value={key}>{dept.name}</option>
+                  key !== 'ee' ? <option key={key} value={key}>{dept.name}</option> : null
                 ))}
               </select>
               <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
@@ -107,21 +107,6 @@ const Timetable = () => {
         )}
       </main>
 
-      {/* Bottom Nav Bar */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 bg-surface-container flex justify-around items-center h-20 px-base pb-safe shadow-lg">
-        <button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200" onClick={() => navigate('/dashboard')}>
-          <span className="material-symbols-outlined">home</span>
-          <span className="font-label-md text-label-md">Home</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200" onClick={() => navigate('/students')}>
-          <span className="material-symbols-outlined">school</span>
-          <span className="font-label-md text-label-md">Students</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant active:scale-90 transition-transform duration-200" onClick={() => navigate('/reports')}>
-          <span className="material-symbols-outlined">assessment</span>
-          <span className="font-label-md text-label-md">Reports</span>
-        </button>
-      </nav>
     </>
   );
 };

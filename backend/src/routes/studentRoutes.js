@@ -1,5 +1,6 @@
 const express = require('express');
 const { protect } = require('../middleware/authMiddleware');
+const { verifyApiKey } = require('../middleware/apiKeyMiddleware');
 const upload = require('../config/multerConfig');
 const {
   getStudents,
@@ -13,7 +14,14 @@ const {
   importStudentsFromJSON,
   importPhotosFromZip,
   downloadSampleExcel,
-  uploadPhotoDirect
+  uploadPhotoDirect,
+  googleFormRegister,
+  getRegistrationLogs,
+  retryRegistrationLog,
+  getGoogleFormConfig,
+  saveGoogleFormConfig,
+  getGoogleFormStats,
+  syncGoogleSheet
 } = require('../controllers/studentController');
 
 const router = express.Router();
@@ -21,8 +29,23 @@ const router = express.Router();
 // Sample Download (Public / Template)
 router.get('/sample-excel', downloadSampleExcel);
 
+// Google Form Registration Webhook (Protected via X-API-KEY header)
+router.post('/google-form-register', verifyApiKey, upload.single('face_photo'), googleFormRegister);
+
 // Apply auth middleware to remaining endpoints
 router.use(protect);
+
+// Google Form Details & Real-Time Testing Endpoints
+router.route('/google-form-config')
+  .get(getGoogleFormConfig)
+  .post(saveGoogleFormConfig);
+
+router.get('/google-form-stats', getGoogleFormStats);
+router.post('/google-sheet-sync', syncGoogleSheet);
+
+// Registration Logs & Verification Dashboard
+router.get('/registration-logs', getRegistrationLogs);
+router.post('/registration-logs/:id/retry', upload.single('face_photo'), retryRegistrationLog);
 
 // Import Routes
 router.post('/import-excel', upload.single('file'), importStudentsFromExcel);

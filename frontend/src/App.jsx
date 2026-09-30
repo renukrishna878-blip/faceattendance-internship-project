@@ -7,6 +7,7 @@ import Layout from './layouts/Layout';
 
 // Pages
 import TeacherLogin from './pages/TeacherLogin';
+import TeacherRegister from './pages/TeacherRegister';
 import Dashboard from './pages/Dashboard';
 import StudentDatabase from './pages/StudentDatabase';
 import AddNewStudent from './pages/AddNewStudent';
@@ -20,6 +21,8 @@ import AttendanceConfirmation from './pages/AttendanceConfirmation';
 import Reports from './pages/Reports';
 import ReportDetails from './pages/ReportDetails';
 import Timetable from './pages/Timetable';
+import TeacherProfile from './pages/TeacherProfile';
+import AdminRegistrationDashboard from './pages/AdminRegistrationDashboard';
 
 // Route Guard Component
 const RequireClassSelection = ({ children }) => {
@@ -36,11 +39,14 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<TeacherLogin />} />
+        <Route path="/register" element={<TeacherRegister />} />
         
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="timetable" element={<Timetable />} />
+          <Route path="profile" element={<TeacherProfile />} />
+          <Route path="registrations" element={<AdminRegistrationDashboard />} />
           
           <Route path="students">
             <Route index element={<StudentDatabase />} />

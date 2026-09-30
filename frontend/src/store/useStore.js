@@ -9,6 +9,16 @@ const useStore = create((set) => ({
     department: '',
   },
   setTeacher: (teacherData) => set((state) => ({ teacher: { ...state.teacher, ...teacherData } })),
+  token: typeof window !== 'undefined' ? (localStorage.getItem('token') || '') : '',
+  setToken: (token) => set({ token }),
+  logout: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('teacherName');
+      localStorage.removeItem('teacherPhoto');
+    }
+    set({ token: '', teacher: { teacherId: null, teacherName: '', teacherPhoto: '', department: '' } });
+  },
 
   // --- Selected Class Context ---
   selectedClass: {
@@ -22,12 +32,14 @@ const useStore = create((set) => ({
   // --- Attendance Session Context ---
   attendanceSession: {
     attendanceId: null,
+    attendanceRecordIds: {},
     date: null,
     uploadedImage: null,
     detectedFaces: [],
     recognizedStudents: [],
     absentStudents: [],
     attendanceStatus: {}, // e.g. { "studentId": "Present", "studentId2": "Absent" }
+    initialAttendanceStatus: {}, // e.g. { "studentId": "Present" }
     confidenceScores: {}, // e.g. { "studentId": 0.95 }
     editedStudents: [],
     finalAttendance: [],
@@ -39,12 +51,14 @@ const useStore = create((set) => ({
   resetAttendanceSession: () => set({
     attendanceSession: {
       attendanceId: null,
+      attendanceRecordIds: {},
       date: null,
       uploadedImage: null,
       detectedFaces: [],
       recognizedStudents: [],
       absentStudents: [],
       attendanceStatus: {},
+      initialAttendanceStatus: {},
       confidenceScores: {},
       editedStudents: [],
       finalAttendance: [],
@@ -67,6 +81,12 @@ const useStore = create((set) => ({
   // --- Student Database Cache ---
   students: [],
   setStudents: (studentsList) => set({ students: studentsList }),
+
+  // --- Local Attendance Session History Cache ---
+  attendanceHistory: [],
+  addAttendanceSessionToHistory: (session) => set((state) => ({
+    attendanceHistory: [...state.attendanceHistory, session]
+  })),
 }));
 
 export default useStore;

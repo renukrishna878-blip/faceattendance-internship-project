@@ -4,6 +4,8 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
+const Report = require('../models/reportModel');
+const emailService = require('../services/emailService');
 
 // @desc    Process classroom image and generate mock attendance
 // @route   POST /api/attendance/process
@@ -17,10 +19,39 @@ const processClassroomImage = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Class ID and Classroom Image are required' });
     }
 
-    if (!subject_id) {
-      const pool = require('../config/db');
-      const [subs] = await pool.query('SELECT id FROM Subjects LIMIT 1');
-      subject_id = subs.length > 0 ? subs[0].id : 1;
+    const pool = require('../config/db');
+
+    // Resolve string class_id (e.g. "cs-3-A") to numeric database class_id
+    if (typeof class_id === 'string' && isNaN(class_id)) {
+      const match = class_id.match(/^([a-z]+)-(\d+)-([a-z])$/i);
+      if (match) {
+        const deptCode = match[1].toUpperCase();
+        const year = parseInt(match[2]);
+        const section = match[3].toUpperCase();
+        
+        const [classRows] = await pool.query(
+          `SELECT c.id FROM Classes c 
+           JOIN Departments d ON c.department_id = d.id 
+           WHERE d.code = ? AND c.year = ? AND c.section = ?`,
+          [deptCode, year, section]
+        );
+        if (classRows.length > 0) {
+          class_id = classRows[0].id;
+        } else {
+          return res.status(404).json({ success: false, message: `Class ${deptCode} Year ${year} Section ${section} not found in database.` });
+        }
+      }
+    }
+
+    // Resolve string subject_id (e.g. "CS-5-OS") to numeric database subject_id
+    if (typeof subject_id === 'string' && isNaN(subject_id)) {
+      const [subRows] = await pool.query('SELECT id FROM Subjects WHERE code = ?', [subject_id]);
+      if (subRows.length > 0) {
+        subject_id = subRows[0].id;
+      } else {
+        const [firstSub] = await pool.query('SELECT id FROM Subjects LIMIT 1');
+        subject_id = firstSub.length > 0 ? firstSub[0].id : 1;
+      }
     }
 
     const imageUrl = `/uploads/students/${req.files[0].filename}`;
@@ -29,7 +60,20 @@ const processClassroomImage = async (req, res, next) => {
     const sessionId = await Attendance.createSession(teacher_id, class_id, subject_id, imageUrl);
 
     // 2. Fetch Students for the class
-    const students = await ClassModel.getStudentsByClass(class_id);
+    let students = await ClassModel.getStudentsByClass(class_id);
+
+    // If no students in this specific section, fall back to all active registered students from Google Form dataset
+    if (!students || students.length === 0) {
+      const [allRegistered] = await pool.query(`
+        SELECT s.id, s.register_number, s.name, s.email, s.face_embedding, s.photo_url as primary_photo, s.photo_url
+        FROM Students s
+        WHERE s.registration_status = 'REGISTERED' AND s.face_embedding IS NOT NULL
+        ORDER BY s.register_number ASC
+      `);
+      if (allRegistered && allRegistered.length > 0) {
+        students = allRegistered;
+      }
+    }
 
     if (!students || students.length === 0) {
       return res.status(400).json({ 
@@ -120,7 +164,13 @@ const processClassroomImage = async (req, res, next) => {
       session_id: sessionId,
       data: {
         ...sessionData,
-        ai_results: aiResults,
+        ai_results: aiResults.map(r => {
+          const student = students.find(s => String(s.id) === String(r.student_id));
+          return {
+            ...r,
+            register_number: student ? student.register_number : null
+          };
+        }),
         unrecognized_faces: unrecognizedFaces
       }
     });
@@ -177,6 +227,21 @@ const finalizeSession = async (req, res, next) => {
   try {
     const sessionId = req.params.id;
     await Attendance.updateSessionStatus(sessionId, 'completed');
+    
+    // Auto-trigger low attendance email checks in the background (does not block HTTP response)
+    const teacherId = req.teacher.id;
+    setImmediate(async () => {
+      try {
+        console.log(`[Auto-Trigger] Checking for low-attendance warning emails for teacher ID ${teacherId}...`);
+        const atRiskStudents = await Report.getLowAttendanceStudents(teacherId, 75);
+        for (const student of atRiskStudents) {
+          await emailService.sendLowAttendanceWarning(student, student.rate);
+        }
+      } catch (autoErr) {
+        console.error(`[Auto-Trigger Error] Failed to run automated email warning task:`, autoErr.message);
+      }
+    });
+
     res.json({ success: true, message: 'Session finalized' });
   } catch (error) {
     next(error);

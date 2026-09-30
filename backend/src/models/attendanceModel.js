@@ -32,7 +32,7 @@ const Attendance = {
     const [attendance] = await pool.query(`
       SELECT a.id as attendance_id, a.ai_prediction, a.final_status, a.confidence_score,
              st.id as student_id, st.register_number, st.name,
-             (SELECT photo_url FROM StudentPhotos p WHERE p.student_id = st.id AND is_primary = TRUE LIMIT 1) as photo_url
+             COALESCE((SELECT photo_url FROM StudentPhotos p WHERE p.student_id = st.id AND is_primary = TRUE LIMIT 1), st.photo_url) as photo_url
       FROM Attendance a
       LEFT JOIN Students st ON a.student_id = st.id
       WHERE a.session_id = ?

@@ -39,7 +39,8 @@ const Class = {
   getStudentsByClass: async (classId) => {
     const [rows] = await pool.query(`
       SELECT s.id, s.register_number, s.name, s.email, s.face_embedding,
-        (SELECT photo_url FROM StudentPhotos p WHERE p.student_id = s.id AND is_primary = TRUE LIMIT 1) as primary_photo
+        COALESCE((SELECT photo_url FROM StudentPhotos p WHERE p.student_id = s.id AND is_primary = TRUE LIMIT 1), s.photo_url) as primary_photo,
+        s.photo_url
       FROM Students s
       WHERE s.class_id = ?
       ORDER BY s.register_number ASC

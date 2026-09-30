@@ -1,4 +1,5 @@
 const Report = require('../models/reportModel');
+const emailService = require('../services/emailService');
 
 // @desc    Get dashboard metrics (Summary, Trends, At-Risk Students)
 // @route   GET /api/reports/dashboard
@@ -24,6 +25,39 @@ const getDashboardReports = async (req, res, next) => {
   }
 };
 
+// @desc    Trigger simulated warning emails manually or automatically to students below 75% attendance
+// @route   POST /api/reports/send-warning-emails
+// @access  Private
+const triggerWarningEmails = async (req, res, next) => {
+  try {
+    const teacherId = req.teacher.id;
+    const atRiskStudents = await Report.getLowAttendanceStudents(teacherId, 75);
+    
+    const sentList = [];
+    for (const student of atRiskStudents) {
+      const emailResult = await emailService.sendLowAttendanceWarning(student, student.rate);
+      if (emailResult.success) {
+        sentList.push({
+          id: student.id,
+          name: student.name,
+          email: student.email,
+          rate: student.rate,
+          filename: emailResult.filename
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      count: sentList.length,
+      data: sentList
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
-  getDashboardReports
+  getDashboardReports,
+  triggerWarningEmails
 };

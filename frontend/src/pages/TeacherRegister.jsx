@@ -16,6 +16,7 @@ const TeacherRegister = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [teacherPhoto, setTeacherPhoto] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -60,6 +61,18 @@ const TeacherRegister = () => {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        try {
+          localStorage.setItem('registered_email', email);
+          localStorage.setItem('registered_password', password);
+          localStorage.setItem('registered_name', name);
+          localStorage.setItem('registered_department', department);
+          localStorage.setItem('registered_phone', phone);
+          if (teacherPhoto) {
+            localStorage.setItem('teacherPhoto_' + email, teacherPhoto);
+          }
+        } catch (storageError) {
+          console.warn('Could not save teacher registration details to localStorage:', storageError.message);
+        }
         setSuccessMsg('Account created successfully! Redirecting to login...');
         setTimeout(() => {
           navigate('/login');
@@ -120,6 +133,38 @@ const TeacherRegister = () => {
               </div>
             </div>
 
+            {/* Profile Photo Upload Field (Optional) */}
+            <div className="flex flex-col gap-1 relative group">
+              <label className="text-sm font-medium text-on-surface-variant ml-1" htmlFor="teacherPhoto">Profile Photo (Optional)</label>
+              <div className="relative flex items-center bg-surface-container-highest border-b-2 border-outline-variant p-3 hover:border-on-surface focus-within:border-primary transition-all rounded-t-lg">
+                <span className="material-symbols-outlined text-on-surface-variant mr-3">photo_camera</span>
+                <input 
+                  type="file" 
+                  id="teacherPhoto" 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setTeacherPhoto(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    } else {
+                      setTeacherPhoto('');
+                    }
+                  }}
+                  className="w-full text-xs text-on-surface outline-none file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
+                />
+              </div>
+              {teacherPhoto && (
+                <div className="mt-2 flex items-center gap-2 px-1">
+                  <img src={teacherPhoto} className="w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm" alt="Preview" />
+                  <button type="button" onClick={() => setTeacherPhoto('')} className="text-xs text-error font-medium hover:underline">Remove photo</button>
+                </div>
+              )}
+            </div>
+
             {/* Email Address */}
             <div className="flex flex-col gap-1 relative group">
               <label className="text-sm font-medium text-on-surface-variant ml-1" htmlFor="email">Email Address *</label>
@@ -144,16 +189,24 @@ const TeacherRegister = () => {
                 <label className="text-sm font-medium text-on-surface-variant ml-1" htmlFor="department">Department *</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">domain</span>
-                  <input 
-                    type="text" 
+                  <select 
                     id="department" 
                     name="department"
                     value={formData.department}
                     onChange={handleChange}
-                    className="w-full h-12 pl-12 pr-4 bg-surface-container-highest dark:bg-surface-container border-b-2 border-outline-variant hover:border-on-surface focus:border-primary outline-none transition-all rounded-t-lg text-on-surface" 
-                    placeholder="e.g. Computer Science"
+                    className="w-full h-12 pl-12 pr-10 bg-surface-container-highest dark:bg-surface-container border-b-2 border-outline-variant hover:border-on-surface focus:border-primary outline-none transition-all rounded-t-lg text-on-surface appearance-none cursor-pointer"
                     required 
-                  />
+                  >
+                    <option value="" disabled>Select Department</option>
+                    <option value="Computer Science">Computer Science & Engineering</option>
+                    <option value="Electronics & Comm">Electronics & Comm. Eng.</option>
+                    <option value="Electrical & Electronics">Electrical & Electronics Eng.</option>
+                    <option value="Mechanical Eng">Mechanical Eng.</option>
+                    <option value="Civil Eng">Civil Eng.</option>
+                    <option value="Chemical Eng">Chemical Eng.</option>
+                    <option value="Information Technology">Information Technology</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
                 </div>
               </div>
 

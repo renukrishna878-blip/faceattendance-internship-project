@@ -144,7 +144,7 @@ const AddNewStudent = () => {
 </div>
 </main>
 {/*  Bottom Action Bar  */}
-<div className="fixed bottom-0 left-0 w-full bg-surface-container-lowest p-md pb-safe border-t border-outline-variant md:flex md:justify-center">
+<div className="bg-white p-md border-t border-outline-variant md:flex md:justify-center mt-6">
 <div className="max-w-4xl w-full flex flex-col md:flex-row gap-md">
 <button className="flex-1 h-12 bg-primary text-white font-title-lg text-title-lg rounded-full flex items-center justify-center gap-sm active:scale-95 transition-all shadow-lg hover:bg-surface-tint">
 <span className="material-symbols-outlined">save</span>

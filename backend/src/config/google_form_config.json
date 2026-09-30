@@ -1,0 +1,7 @@
+{
+  "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSevFlbopONwdOTKDGysMemjzOo3I_RqURK6rxIE65IBmo9axA/viewform?usp=publish-editor",
+  "sheet_url": "https://docs.google.com/spreadsheets/d/1sSDdlrsmVqgsPKy5rVMOSscnlYThPVRXciSytXJK5JE/edit?gid=1105074837#gid=1105074837",
+  "webhook_url": "http://localhost:5000/api/students/google-form-register",
+  "api_key": "smart_attend_gf_sec_2026_x9k",
+  "updated_at": "2026-09-30T11:42:29.337Z"
+}

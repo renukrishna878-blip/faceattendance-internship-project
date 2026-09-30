@@ -119,10 +119,10 @@ async function verifyPipeline() {
     const attendanceList = sessionResponse.data.data.attendance;
 
     console.log('\n6. Present list:');
-    attendanceList.filter(a => a.ai_prediction === 'Present').forEach(a => console.log(`- ${a.student_name} (${a.register_number})`));
+    attendanceList.filter(a => a.ai_prediction === 'Present').forEach(a => console.log(`- ${a.name} (${a.register_number})`));
 
     console.log('\n7. Absent list:');
-    attendanceList.filter(a => a.ai_prediction === 'Absent').forEach(a => console.log(`- ${a.student_name} (${a.register_number})`));
+    attendanceList.filter(a => a.ai_prediction === 'Absent').forEach(a => console.log(`- ${a.name} (${a.register_number})`));
 
     // ---------------------------------------------------------
     // STEP 4: TEACHER CORRECTIONS
@@ -132,7 +132,7 @@ async function verifyPipeline() {
     const recordToChange = attendanceList[0];
     if (recordToChange) {
       const newStatus = recordToChange.final_status === 'Present' ? 'Absent' : 'Present';
-      console.log(`Teacher overrides student ${recordToChange.student_name} from ${recordToChange.final_status} to ${newStatus}`);
+      console.log(`Teacher overrides student ${recordToChange.name} from ${recordToChange.final_status} to ${newStatus}`);
       
       await axios.put(`${BASE_URL}/attendance/record/${recordToChange.attendance_id}/override`, {
         new_status: newStatus,

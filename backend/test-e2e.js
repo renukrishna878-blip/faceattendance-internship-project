@@ -14,11 +14,11 @@ async function runE2ETest() {
     // 2. We need a token to access the Node.js API (Mock Login)
     // First, let's login as the seeded teacher
     const loginRes = await axios.post('http://localhost:5000/api/auth/login', {
-      email: 'smith@university.edu',
-      password: 'password123'
+      email: 'admin@gmail.com',
+      password: 'Admin@123'
     });
     
-    const token = loginRes.data.token;
+    const token = loginRes.data.data.token;
     console.log('1. Logged in successfully. Token acquired.');
 
     // 3. Hit the Node.js /api/attendance/process endpoint

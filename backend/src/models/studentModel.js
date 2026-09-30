@@ -2,10 +2,35 @@ const pool = require('../config/db');
 
 const Student = {
   create: async (studentData) => {
-    const { register_number, name, email, phone, class_id } = studentData;
+    const { 
+      register_number, 
+      name, 
+      email, 
+      phone, 
+      class_id, 
+      photo_url, 
+      face_embedding, 
+      registration_status = 'REGISTERED', 
+      face_status = 'VERIFIED', 
+      consent_given = true 
+    } = studentData;
+
     const [result] = await pool.query(
-      'INSERT INTO Students (register_number, name, email, phone, class_id) VALUES (?, ?, ?, ?, ?)',
-      [register_number, name, email || null, phone || null, class_id || null]
+      `INSERT INTO Students 
+        (register_number, name, email, phone, class_id, photo_url, face_embedding, registration_status, face_status, consent_given) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        register_number, 
+        name, 
+        email || null, 
+        phone || null, 
+        class_id || null, 
+        photo_url || null, 
+        face_embedding ? JSON.stringify(face_embedding) : null,
+        registration_status,
+        face_status,
+        consent_given ? 1 : 0
+      ]
     );
     return result.insertId;
   },
@@ -25,10 +50,10 @@ const Student = {
     await pool.query('DELETE FROM Students WHERE id = ?', [id]);
   },
 
-  saveEmbedding: async (id, embedding, imagePath = null) => {
+  saveEmbedding: async (id, embedding, imagePath = null, model = 'SFace') => {
     // 1. Update Students table
     await pool.query(
-      'UPDATE Students SET face_embedding = ? WHERE id = ?',
+      'UPDATE Students SET face_embedding = ?, face_status = "VERIFIED", registration_status = "REGISTERED" WHERE id = ?',
       [JSON.stringify(embedding), id]
     );
     // 2. Clear old embedding from StudentEmbeddings table
@@ -36,7 +61,7 @@ const Student = {
     // 3. Insert new embedding entry in StudentEmbeddings table
     await pool.query(
       'INSERT INTO StudentEmbeddings (student_id, embedding, embedding_model, image_path) VALUES (?, ?, ?, ?)',
-      [id, JSON.stringify(embedding), 'ArcFace', imagePath]
+      [id, JSON.stringify(embedding), model, imagePath]
     );
   },
 
@@ -141,6 +166,106 @@ const Student = {
       await pool.query('UPDATE Students SET face_embedding = NULL WHERE id = ?', [studentId]);
       await pool.query('DELETE FROM StudentEmbeddings WHERE student_id = ?', [studentId]);
     }
+  },
+
+  logRegistration: async (logData) => {
+    const {
+      student_id = null,
+      register_number,
+      name,
+      department = null,
+      class_section = null,
+      email = null,
+      photo_url = null,
+      registration_status,
+      face_status = 'PENDING',
+      error_message = null,
+      raw_payload = null
+    } = logData;
+
+    const [result] = await pool.query(
+      `INSERT INTO RegistrationLogs 
+        (student_id, register_number, name, department, class_section, email, photo_url, registration_status, face_status, error_message, raw_payload)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        student_id,
+        register_number,
+        name,
+        department,
+        class_section,
+        email,
+        photo_url,
+        registration_status,
+        face_status,
+        error_message,
+        raw_payload ? JSON.stringify(raw_payload) : null
+      ]
+    );
+    return result.insertId;
+  },
+
+  getRegistrationLogs: async (statusFilter = null) => {
+    let query = `
+      SELECT 
+        r.id,
+        r.student_id,
+        r.register_number,
+        r.name,
+        r.department,
+        r.class_section,
+        r.email,
+        r.photo_url,
+        r.registration_status,
+        r.face_status,
+        r.error_message,
+        r.created_at,
+        r.updated_at,
+        s.name as current_student_name,
+        s.photo_url as current_student_photo
+      FROM RegistrationLogs r
+      LEFT JOIN Students s ON r.student_id = s.id
+    `;
+    const params = [];
+    if (statusFilter && statusFilter !== 'ALL') {
+      query += ` WHERE r.registration_status = ?`;
+      params.push(statusFilter);
+    }
+    query += ` ORDER BY r.id DESC`;
+    const [rows] = await pool.query(query, params);
+    return rows;
+  },
+
+  getRegistrationLogById: async (id) => {
+    const [rows] = await pool.query(`
+      SELECT 
+        r.id,
+        r.student_id,
+        r.register_number,
+        r.name,
+        r.department,
+        r.class_section,
+        r.email,
+        r.photo_url,
+        r.registration_status,
+        r.face_status,
+        r.error_message,
+        r.created_at,
+        r.updated_at
+      FROM RegistrationLogs r 
+      WHERE r.id = ?
+    `, [id]);
+    return rows[0] || null;
+  },
+
+  updateRegistrationLog: async (id, updateData) => {
+    const fields = [];
+    const values = [];
+    for (const [key, val] of Object.entries(updateData)) {
+      fields.push(`${key} = ?`);
+      values.push(key === 'raw_payload' ? JSON.stringify(val) : val);
+    }
+    values.push(id);
+    await pool.query(`UPDATE RegistrationLogs SET ${fields.join(', ')} WHERE id = ?`, values);
   }
 };
 

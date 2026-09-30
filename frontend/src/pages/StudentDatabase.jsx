@@ -1,30 +1,179 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
+import { DEPARTMENTS, generateRoster } from '../utils/timetableData';
 
 const StudentDatabase = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const teacher = useStore((state) => state.teacher);
+  const token = useStore((state) => state.token);
   const teacherName = teacher?.teacherName || localStorage.getItem('teacherName') || 'Dr. Sarah Smith';
   const teacherPhoto = teacher?.teacherPhoto || localStorage.getItem('teacherPhoto');
-  
-  // Basic mock data
-  const students = [
-    { id: '2023CS01', name: 'Alex Rivera', dept: 'Computer Science', section: 'A', year: '3rd Year', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA6t-3Ovyb8ooA_kyTGdJul7JfLImmJ947LFz4f5KYFDoAtKHjxD3QO6RZdcCkbmbrqUHlI2280VAu4Cr4OPHCZCAUSZ4V6lziCNNOVIGcoN_Ndl3UEVz3Zh5-SPvfqyCLk23cUrUmgmI1ig2m57CDClpMNcDhtCpkltjIduTf19JmZQX2WIGqJtsG95u4pUFrnzuHTd4V0B-RFbxJmFTtoeqcRV3D-44Rvi_lpu2yKpjuqNA7bK5o0RQ' },
-    { id: '2023CS14', name: 'Priya Sharma', dept: 'Computer Science', section: 'B', year: '3rd Year', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5dPcS9zenyCTjbRIlPsAygqvhZCFvlTOOwfxCmZK3vmClsuM4vuZZaaHrfuAhOvByfzzJIFCjpBVnymFuTCCgYHj5pYEV5XH-s7hzkSql26iZWWBFkFUWdUQ3vVHC4YEgxW0OF2dRLpwO02fczzMzvUgfQnZR9Q-dTwXM4imrOl1Pd80WUIz9vRisNbQea699wo82grDAx22ihT1V739n3cTm-k_tWTueMNg9xpmvpJFG7TIxZONOHA' },
-    { id: '2023EE08', name: 'Chen Wei', dept: 'Electrical Eng.', section: 'A', year: '2nd Year', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7J7DqVvkRMyL4fJXkY9Hy1HqiMlSDHyV6isHZ7ee2k6bptxt0Jmzx3tHK9_DdrpfBeGL_L2-Ycx_XrkbboaTOATLNkIEVmcGyvM0Xv7W49r2dbws33PI0au8pHzGUqTGxz_aRJKX6TimHYjYi6lyxbXlF05kX5xdKUTw5ZW5zHmJyHsbjOkjCSNAyM9RmBfXqqU2NJs2WVH6fVO8g8ltjqnx5f4jVdtziJ2kb35I8iQCwlvVWh4Dbug' },
-    { id: '2023BA22', name: 'Sarah Johnson', dept: 'Business Admin', section: 'C', year: '4th Year', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1sK7ge7T_Ts0rEekOy8FVnGOJi0kqY32DB1yNcoco5PkMq3WckH_qAWJekGlDeBl_nxYeJfRCgErSrB6SAfa4gXFFGcu3dAL3D6wPprFg-nURKbHeGCLMrYbP--2_WYKl70DZokW_LV-7L3YJzQcYWtPZeFOUL4K96o13jpinMZ949mtb0HNPIk9J4x4qb4_4kv0deKFna1XfaSHQwtuzlD6hktdQqqfSkjaigzV1tLxMIaml5e7ZBQ' }
-  ];
+
+  const [studentsList, setStudentsList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterDept, setFilterDept] = useState('');
+  const [filterYear, setFilterYear] = useState('');
+  const [filterSection, setFilterSection] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const loadStudents = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/students', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success && data.data) {
+        const formatted = data.data.map(student => {
+          const displayYear = student.year ? `${student.year}${student.year === 1 ? 'st' : student.year === 2 ? 'nd' : student.year === 3 ? 'rd' : 'th'} Year` : '3rd Year';
+          const photo = student.photo_url || student.primary_photo;
+          const fullImgUrl = photo
+            ? (photo.startsWith('http') ? photo : `http://localhost:5000${photo}`)
+            : null;
+
+          return {
+            id: student.register_number,
+            name: student.name,
+            dept: student.department_name || 'Computer Science & Engineering',
+            section: student.section || 'C',
+            year: displayYear,
+            img: fullImgUrl
+          };
+        });
+        setStudentsList(formatted);
+      } else {
+        setStudentsList([]);
+      }
+    } catch (err) {
+      console.warn('Backend API student fetch error:', err.message);
+      setStudentsList([]);
+    } finally {
+      setIsLoaded(true);
+    }
+  };
 
   useEffect(() => {
-    setIsLoaded(true);
-  }, []);
+    loadStudents();
+  }, [token]);
+
+  const handleDownloadTemplate = () => {
+    window.open('http://localhost:5000/api/students/sample-excel', '_blank');
+  };
+
+  const handleFileImport = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setToastMessage(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/students/import-excel', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      const result = await response.json();
+      if (result.success) {
+        setToastMessage({
+          type: 'success',
+          text: `Import Complete! ${result.data?.inserted || 0} students added, ${result.data?.updated || 0} records updated in database.`
+        });
+        loadStudents();
+      } else {
+        throw new Error(result.message || 'Import failed');
+      }
+    } catch (err) {
+      console.warn('Backend CSV import failed, falling back to local CSV parser:', err.message);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const text = event.target.result;
+          const lines = text.split('\n').filter(l => l.trim().length > 0);
+          if (lines.length > 1) {
+            const imported = [];
+            for (let i = 1; i < lines.length; i++) {
+              const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+              if (cols.length >= 2 && cols[0] && cols[1]) {
+                imported.push({
+                  id: cols[0],
+                  name: cols[1],
+                  dept: cols[2] || 'Computer Science & Engineering',
+                  year: cols[3] ? `${cols[3]} Year` : '3rd Year',
+                  section: cols[4] || 'A',
+                  img: `https://api.dicebear.com/7.x/adventurer/svg?seed=${cols[0]}`
+                });
+              }
+            }
+            if (imported.length > 0) {
+              setStudentsList(prev => [...imported, ...prev]);
+              setToastMessage({
+                type: 'success',
+                text: `Successfully imported ${imported.length} student records from ${file.name}!`
+              });
+            }
+          }
+        } catch (parseErr) {
+          setToastMessage({ type: 'error', text: 'Could not read CSV file.' });
+        }
+      };
+      reader.readAsText(file);
+    } finally {
+      setIsImporting(false);
+      e.target.value = '';
+    }
+  };
+
+  const filteredStudents = studentsList.filter(student => {
+    const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          student.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (student.dept && student.dept.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesDept = !filterDept || 
+                        (student.dept && student.dept.toLowerCase().includes(DEPARTMENTS[filterDept]?.name.toLowerCase())) ||
+                        (student.id && student.id.toLowerCase().includes(filterDept.toLowerCase()));
+
+    const matchesYear = !filterYear || 
+                        (student.year && String(student.year).includes(filterYear));
+
+    const matchesSection = !filterSection || 
+                           (student.section && student.section === filterSection);
+
+    return matchesSearch && matchesDept && matchesYear && matchesSection;
+  });
+
+  const totalStudents = filteredStudents.length;
+  const departmentsCount = new Set(filteredStudents.map(s => s.dept)).size;
+  const sectionsCount = new Set(filteredStudents.map(s => `${s.dept}-${s.year}-${s.section}`)).size;
+  const matchCount = filteredStudents.length;
 
   return (
     <div className="font-sans text-on-surface bg-gray-50 min-h-screen">
+      {/* Toast Alert */}
+      {toastMessage && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md bg-white border-l-4 border-emerald-500 rounded-xl shadow-2xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+          <span className="material-symbols-outlined text-emerald-500">check_circle</span>
+          <div className="flex-1">
+            <p className="font-semibold text-gray-900 text-sm">Google Form Sync</p>
+            <p className="text-xs text-gray-600 mt-1">{toastMessage.text}</p>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-gray-400 hover:text-gray-600">
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 bg-white shadow-sm md:pl-80 transition-all">
+      <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 bg-white shadow-sm md:pl-72 transition-all">
         <div className="flex items-center gap-4">
           <button className="md:hidden p-2 hover:bg-gray-100 transition-colors active:scale-95 duration-150 rounded-full">
             <span className="material-symbols-outlined text-primary">menu</span>
@@ -42,58 +191,106 @@ const StudentDatabase = () => {
         </div>
       </header>
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex fixed inset-y-0 left-0 z-40 w-72 flex-col py-6 bg-white shadow-xl rounded-r-xl transition-transform border-r border-gray-100">
-        <div className="px-6 pb-8 flex flex-col gap-1 mt-14">
-          {teacherPhoto && (
-            <div className="w-16 h-16 rounded-full bg-gray-100 mb-3 overflow-hidden border-2 border-primary">
-              <img className="w-full h-full object-cover" src={teacherPhoto} alt="Profile" />
-            </div>
-          )}
-          <h2 className="text-2xl font-bold text-primary">{teacherName}</h2>
-          <p className="text-sm text-gray-600">Computer Science Dept</p>
-          <p className="text-xs text-gray-400">Faculty ID: 4829</p>
-        </div>
-        
-        <nav className="flex flex-col gap-2">
-          <button onClick={() => navigate('/dashboard')} className="text-gray-600 hover:bg-gray-100 mx-2 px-4 py-3 flex items-center gap-4 transition-all duration-200 rounded-lg text-left">
-            <span className="material-symbols-outlined">dashboard</span>
-            <span className="text-sm font-medium">Dashboard</span>
-          </button>
-          <button className="bg-blue-100 text-blue-900 font-bold rounded-lg mx-2 px-4 py-3 flex items-center gap-4 transition-all duration-200 text-left">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
-            <span className="text-sm font-medium">Student Roster</span>
-          </button>
-          <button onClick={() => navigate('/reports')} className="text-gray-600 hover:bg-gray-100 mx-2 px-4 py-3 flex items-center gap-4 transition-all duration-200 rounded-lg text-left">
-            <span className="material-symbols-outlined">event_note</span>
-            <span className="text-sm font-medium">Attendance Log</span>
-          </button>
-          
-          <div className="mt-auto absolute bottom-4 w-full flex flex-col gap-2">
-            <button className="text-gray-600 hover:bg-gray-100 mx-2 px-4 py-3 flex items-center gap-4 transition-all duration-200 rounded-lg text-left">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-sm font-medium">Settings</span>
-            </button>
-            <button onClick={() => navigate('/login')} className="text-red-600 mx-2 px-4 py-3 flex items-center gap-4 hover:bg-red-50 transition-all duration-200 rounded-lg text-left">
-              <span className="material-symbols-outlined">logout</span>
-              <span className="text-sm font-medium">Logout</span>
-            </button>
-          </div>
-        </nav>
-      </aside>
-
       {/* Main Content */}
-      <main className="pt-20 pb-24 px-4 md:ml-72 md:px-8 min-h-screen">
+      <main className="pt-20 pb-24 px-4 md:px-8 min-h-screen">
         <section className="max-w-5xl mx-auto mb-6">
           
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-on-surface">Student Database</h2>
-              <p className="text-sm text-gray-500">Manage academic profiles and enrollment data.</p>
+          <div className="flex flex-col gap-4 mb-8 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-on-surface">Student Database</h2>
+                <p className="text-xs sm:text-sm text-gray-500">Manage academic profiles and enrollment data.</p>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => navigate('/registrations')}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer"
+                  title="Configure Google Form details and test real-time student registration"
+                >
+                  <span className="material-symbols-outlined text-[16px]">dynamic_form</span>
+                  <span>Google Form & Live Testing</span>
+                </button>
+                <button
+                  onClick={handleDownloadTemplate}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold active:scale-95 transition-all cursor-pointer"
+                  title="Download sample Google Form / CSV template"
+                >
+                  <span className="material-symbols-outlined text-[16px]">download</span>
+                  <span>CSV Template</span>
+                </button>
+                <label className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold active:scale-95 transition-all cursor-pointer shadow-sm">
+                  <span className="material-symbols-outlined text-[16px]">upload_file</span>
+                  <span>{isImporting ? 'Importing...' : 'Import Form (CSV)'}</span>
+                  <input 
+                    type="file" 
+                    accept=".csv,.xlsx,.xls" 
+                    onChange={handleFileImport}
+                    disabled={isImporting}
+                    className="hidden" 
+                  />
+                </label>
+                <button
+                  onClick={() => navigate('/students/add')}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary hover:brightness-110 text-white rounded-xl text-xs font-semibold active:scale-95 transition-all cursor-pointer shadow-sm"
+                >
+                  <span className="material-symbols-outlined text-[16px]">person_add</span>
+                  <span>Add Student</span>
+                </button>
+              </div>
             </div>
-            <div className="relative w-full md:w-96 group">
+
+            <div className="relative w-full group mt-2">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">search</span>
-              <input className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm shadow-sm" placeholder="Search by name, ID or department..." type="text"/>
+              <input 
+                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm shadow-inner" 
+                placeholder="Search by name, ID, or department..." 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Department</label>
+                <select 
+                  value={filterDept} 
+                  onChange={(e) => setFilterDept(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary outline-none cursor-pointer"
+                >
+                  <option value="">All Departments</option>
+                  {Object.entries(DEPARTMENTS).map(([key, dept]) => (
+                    key !== 'ee' ? <option key={key} value={key}>{dept.name}</option> : null
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Academic Year</label>
+                <select 
+                  value={filterYear} 
+                  onChange={(e) => setFilterYear(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary outline-none cursor-pointer"
+                >
+                  <option value="">All Years</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Section</label>
+                <select 
+                  value={filterSection} 
+                  onChange={(e) => setFilterSection(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-sm focus:ring-primary focus:border-primary outline-none cursor-pointer"
+                >
+                  <option value="">All Sections</option>
+                  <option value="A">Section A</option>
+                  <option value="B">Section B</option>
+                  <option value="C">Section C</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -101,19 +298,19 @@ const StudentDatabase = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Students</p>
-              <p className="text-2xl font-bold text-primary mt-1">1,248</p>
+              <p className="text-2xl font-bold text-primary mt-1">{totalStudents}</p>
             </div>
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Departments</p>
-              <p className="text-2xl font-bold text-primary mt-1">12</p>
+              <p className="text-2xl font-bold text-primary mt-1">{departmentsCount}</p>
             </div>
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Sections</p>
-              <p className="text-2xl font-bold text-primary mt-1">48</p>
+              <p className="text-2xl font-bold text-primary mt-1">{sectionsCount}</p>
             </div>
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Pending</p>
-              <p className="text-2xl font-bold text-primary mt-1">14</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Filtered Match</p>
+              <p className="text-2xl font-bold text-primary mt-1">{matchCount}</p>
             </div>
           </div>
 
@@ -130,7 +327,7 @@ const StudentDatabase = () => {
             </div>
 
             {/* List */}
-            {students.map((student, index) => (
+            {filteredStudents.map((student, index) => (
               <div 
                 key={student.id}
                 style={{ 
@@ -178,21 +375,6 @@ const StudentDatabase = () => {
         <span className="material-symbols-outlined text-3xl font-bold">add</span>
       </button>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white px-2 py-2 shadow-[0_-1px_3px_rgba(0,0,0,0.04)]">
-        <button className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" onClick={() => navigate('/dashboard')}>
-          <span className="material-symbols-outlined">home</span>
-          <span className="text-[10px] font-medium mt-1">Home</span>
-        </button>
-        <button className="flex flex-col items-center justify-center bg-blue-100 text-primary rounded-xl px-4 py-1 active:scale-90" onClick={() => navigate('/students')}>
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-          <span className="text-[10px] font-medium mt-1">Students</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-gray-500 px-4 py-1 hover:bg-gray-50 transition-all active:scale-90" onClick={() => navigate('/reports')}>
-          <span className="material-symbols-outlined">assessment</span>
-          <span className="text-[10px] font-medium mt-1">Reports</span>
-        </button>
-      </nav>
     </div>
   );
 };

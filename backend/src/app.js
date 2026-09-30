@@ -7,8 +7,8 @@ const app = express();
 
 // Middleware configuration
 app.use(cors());
-app.use(express.json()); // JSON parsing
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' })); // JSON parsing with base64 support
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(morgan('dev')); // Logging HTTP requests
 
 const authRoutes = require('./routes/authRoutes');
